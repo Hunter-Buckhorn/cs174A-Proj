@@ -1,13 +1,21 @@
 package com.xyz;
+        import java.sql.*;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+
+public class App {
+    public static void main(String[] args) {
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projdb", "root", "root");
+            Statement stmt = con.createStatement();
+            stmt.executeUpdate("INSERT INTO testtable (column_1, column_2) VALUES (1, 'hunter')");
+
+
+        } catch(Exception e) {
+            System.out.println("Error:" + e);
+        }
+
+        System.out.println("HELLO MOTHERFUCKERS!");
     }
 }
