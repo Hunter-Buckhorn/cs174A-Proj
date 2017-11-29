@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS Stock_Accounts (
+  aid INT NOT NULL,
+  PRIMARY KEY (aid),
+  FOREIGN KEY (aid) REFERENCES Accounts(aid)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
