@@ -24,13 +24,17 @@ public class DBInteraction {
     }
 
     private static void establishSchema(Statement stmt) {
-        executeAllStatementOf(stmt, "schema/entities/");
-        executeAllStatementOf(stmt, "schema/relations/");
+        executeAllStatementOf(stmt, "schema/level_0/");
+        executeAllStatementOf(stmt, "schema/level_0/level_1/");
+        executeAllStatementOf(stmt, "schema/level_0/level_1/level_2/");
     }
 
     private static void executeAllStatementOf(Statement stmt, String subfolder_path) {
         File folder = new File(SQL_FOLDER_REL_PATH + subfolder_path);
         for (File f : folder.listFiles()) {
+            if (f.isDirectory()) {
+                continue;
+            }
             String sql_stmt = turnFileContentToString(f);
             try {
                 stmt.execute(sql_stmt);
@@ -54,7 +58,6 @@ public class DBInteraction {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // System.out.println(str.toString());
         return str.toString();
     }
 }

@@ -1,10 +1,11 @@
-CREATE TABLE IF NOT EXISTS Accrue_Interest_Transactions (
+CREATE TABLE IF NOT EXISTS Withdraw_Transactions (
 	tid INT NOT NULL,
-	aid INT,
+	aid INT NOT NULL,
 	date DATE,
+	amount DECIMAL,
 	PRIMARY KEY (tid),
 	FOREIGN KEY (tid) REFERENCES Transactions(tid)
-	    ON DELETE CASCADE
-	    ON UPDATE CASCADE,
+	  ON DELETE CASCADE
+      ON UPDATE CASCADE,
 	FOREIGN KEY (aid) REFERENCES Market_Accounts(aid)
 );

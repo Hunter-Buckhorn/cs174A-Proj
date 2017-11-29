@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS Market_Accounts (
+	aid INT NOT NULL,
+    balance DECIMAL,
+    uname VARCHAR(255) NOT NULL,
+    PRIMARY KEY (aid),
+	FOREIGN KEY (aid) REFERENCES Accounts(aid)
+	  ON DELETE CASCADE
+	  ON UPDATE CASCADE,
+	FOREIGN KEY (uname) REFERENCES Customers(uname)
+)

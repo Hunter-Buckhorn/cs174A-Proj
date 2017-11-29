@@ -1,8 +1,7 @@
-CREATE TABLE IF NOT EXISTS Deposit_Transactions (
+CREATE TABLE IF NOT EXISTS Accrue_Interest_Transactions (
 	tid INT NOT NULL,
-	aid INT,
+	aid INT NOT NULL,
 	date DATE,
-	amount DECIMAL,
 	PRIMARY KEY (tid),
 	FOREIGN KEY (tid) REFERENCES Transactions(tid)
 	    ON DELETE CASCADE
