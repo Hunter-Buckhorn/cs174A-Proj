@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS Buy_Transactions (
 	s_aid INT NOT NULL,
 	sym CHAR(3) NOT NULL,
 	amount DECIMAL(18,3),
+	pps DECIMAL,
     date DATE,
-    price DECIMAL(18,3),
 	PRIMARY KEY (tid),
 	FOREIGN KEY (tid) REFERENCES Transactions(tid)
 	  ON DELETE CASCADE

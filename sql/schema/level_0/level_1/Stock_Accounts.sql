@@ -1,12 +1,9 @@
 CREATE TABLE IF NOT EXISTS Stock_Accounts (
 	aid INT NOT NULL,
 	uname VARCHAR(255) NOT NULL,
-    sym CHAR(3) NOT NULL,
-	balance DECIMAL(18,3) DEFAULT 0.000,
 	PRIMARY KEY (aid),
 	FOREIGN KEY (aid) REFERENCES Accounts(aid)
 	  ON DELETE CASCADE
 	  ON UPDATE CASCADE,
-	FOREIGN KEY (uname) REFERENCES Customers(uname),
-	FOREIGN KEY (sym) REFERENCES Stock_Profiles(sym)
+	FOREIGN KEY (uname) REFERENCES Customers(uname)
 )

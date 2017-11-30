@@ -27,6 +27,8 @@ public class DBInteraction {
         executeAllStatementOf(stmt, "schema/level_0/");
         executeAllStatementOf(stmt, "schema/level_0/level_1/");
         executeAllStatementOf(stmt, "schema/level_0/level_1/level_2/");
+        executeAllStatementOf(stmt, "utilities/");
+        executeAllStatementOf(stmt, "triggers/");
     }
 
     private static void executeAllStatementOf(Statement stmt, String subfolder_path) {
@@ -50,7 +52,7 @@ public class DBInteraction {
             BufferedReader reader = new BufferedReader(new FileReader(f));
             String line;
             while((line = reader.readLine()) != null) {
-                str.append(line);
+                str.append(line + " ");
             }
             reader.close();
         } catch (FileNotFoundException e) {
