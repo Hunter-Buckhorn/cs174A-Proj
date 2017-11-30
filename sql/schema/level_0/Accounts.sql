@@ -1,4 +1,0 @@
-CREATE TABLE IF NOT EXISTS Accounts (
-  aid INT,
-  PRIMARY KEY (aid)
-);
