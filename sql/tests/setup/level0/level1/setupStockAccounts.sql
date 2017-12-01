@@ -1,1 +1,1 @@
-INSERT INTO Stock_Accounts (uname) VALUES ("test");
+INSERT INTO Stock_Accounts (taxid) VALUES ("test");

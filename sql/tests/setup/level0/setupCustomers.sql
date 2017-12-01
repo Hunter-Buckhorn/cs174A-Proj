@@ -1,1 +1,1 @@
-INSERT INTO Customers (uname, pwd, is_admin) VALUES ("test", "test", FALSE);
+INSERT INTO Customers (uname, pwd, taxid, is_admin) VALUES ("test", "test","test",FALSE);

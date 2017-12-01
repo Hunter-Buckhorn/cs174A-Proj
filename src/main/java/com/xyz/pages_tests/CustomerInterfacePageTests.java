@@ -25,7 +25,7 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
     private static void setUp() {
         DBInteraction.setupTestDB();
         setDate("2017-11-30");
-        Initiate(UNAME_STUB);
+        Initiate(UNAME_STUB, TAXID_STUB);
     }
 
     private static void DepositSuccessTest() {

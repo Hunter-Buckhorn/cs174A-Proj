@@ -12,7 +12,7 @@ public class LoginPage {
     public static final int CUSTOMER_RET_CODE = 1;
     public static String uname;
     public static String pwd;
-
+    public static String taxid;
 
     public static int Client_Login() {
         Scanner in = new Scanner(System.in);
@@ -21,12 +21,14 @@ public class LoginPage {
         System.out.print("password:");
         pwd = in.nextLine();
         try {
-            ResultSet res = DBInteraction.getData("is_admin", "Customers", String.format("WHERE uname = \"%s\" AND pwd = \"%s\"", uname, pwd));
+            ResultSet res = DBInteraction.getData("is_admin, taxid", "Customers", String.format("WHERE uname = \"%s\" AND pwd = \"%s\"", uname, pwd));
             res.next();
             if (res.getBoolean("is_admin")) {
+                taxid = res.getString("taxid");
                 return ADMIN_RET_CODE;
             }
             else {
+                taxid = res.getString("taxid");
                 return CUSTOMER_RET_CODE;
             }
         } catch (SQLException e) {

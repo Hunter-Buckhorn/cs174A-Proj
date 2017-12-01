@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class CustomerInterfacePage {
     protected static final String NEW_LINE = System.getProperty("line.separator");
     protected static String UNAME;
+    protected static String TAXID;
     protected static String M_AID;
     protected static String S_AID;
     protected static String DATE;
@@ -19,8 +20,8 @@ public class CustomerInterfacePage {
         System.out.println("SUCCESS!");
     }
 
-    public static void Start(String uname, String date) {
-        Initiate(uname);
+    public static void Start(String uname, String taxid, String date) {
+        Initiate(uname, taxid);
         setDate(date);
         in = new Scanner(System.in);
         userInputLoop: while(true) {
@@ -77,8 +78,9 @@ public class CustomerInterfacePage {
         }
     }
 
-    protected static void Initiate(String uname) {
+    protected static void Initiate(String uname, String taxid) {
         UNAME = uname;
+        TAXID = taxid;
         setM_AID();
         setS_AID();
         setIS_ADMIN();
@@ -86,7 +88,7 @@ public class CustomerInterfacePage {
 
     protected static void setM_AID() {
         try {
-            ResultSet res = DBInteraction.getData("aid", "Market_Accounts", String.format("WHERE uname = \"%s\"", UNAME));
+            ResultSet res = DBInteraction.getData("aid", "Market_Accounts", String.format("WHERE taxid = \"%s\"", TAXID));
             res.next();
             M_AID = res.getString("aid");
         } catch (SQLException e) {
@@ -96,7 +98,7 @@ public class CustomerInterfacePage {
 
     protected static void setS_AID() {
         try {
-            ResultSet res = DBInteraction.getData("aid", "Stock_Accounts", String.format("WHERE uname = \"%s\"", UNAME));
+            ResultSet res = DBInteraction.getData("aid", "Stock_Accounts", String.format("WHERE taxid = \"%s\"", TAXID));
             res.next();
             S_AID = res.getString("aid");
         } catch (SQLException e) {
@@ -223,7 +225,7 @@ public class CustomerInterfacePage {
     }
 
     protected static String getBalance() throws SQLException {
-        ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE uname = \"%s\"", UNAME));
+        ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE taxid = \"%s\"", TAXID));
         res.next();
         return res.getString("balance");
     }

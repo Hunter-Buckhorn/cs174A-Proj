@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS Market_Accounts (
 	aid INT NOT NULL,
     balance DECIMAL,
-    uname VARCHAR(255) NOT NULL,
+    taxid VARCHAR(255) NOT NULL,
     day_of_the_month INT DEFAULT 1,
     running_balance_sum DECIMAL DEFAULT 0.000,
     PRIMARY KEY (aid),
-	FOREIGN KEY (uname) REFERENCES Customers(uname)
+	FOREIGN KEY (taxid) REFERENCES Customers(taxid)
 )

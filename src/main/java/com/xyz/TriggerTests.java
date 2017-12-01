@@ -154,7 +154,7 @@ public class TriggerTests {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
         try {
-            DBInteraction.insertData("Market_Accounts","(aid, uname, balance)", "2, \"test\", 10");
+            DBInteraction.insertData("Market_Accounts","(aid, taxid, balance)", "2, \"test\", 10");
         } catch (SQLException e) {
             if (e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
             else {

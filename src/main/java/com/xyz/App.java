@@ -12,7 +12,7 @@ public class App {
                 case LoginPage.ADMIN_RET_CODE:
                     break loginLoop;
                 case LoginPage.CUSTOMER_RET_CODE:
-                    CustomerInterfacePage.Start(LoginPage.uname, "2017-12-01");
+                    CustomerInterfacePage.Start(LoginPage.uname, LoginPage.taxid, "2017-12-01");
                     break loginLoop;
                 default:
                     break;

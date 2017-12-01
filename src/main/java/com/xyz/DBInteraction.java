@@ -34,14 +34,14 @@ public class DBInteraction {
     }
 
     private static void establishSchema(Statement stmt) {
-        executeAllStatementOf(stmt, "schema/level_0/");
-        executeAllStatementOf(stmt, "schema/level_0/level_1/");
-        executeAllStatementOf(stmt, "schema/level_0/level_1/level_2/");
-        executeAllStatementOf(stmt, "utilities/");
-        executeAllStatementOf(stmt, "triggers/");
+        executeAllStatementFilesIn(stmt, "schema/level_0/");
+        executeAllStatementFilesIn(stmt, "schema/level_0/level_1/");
+        executeAllStatementFilesIn(stmt, "schema/level_0/level_1/level_2/");
+        executeAllStatementFilesIn(stmt, "utilities/");
+        executeAllStatementFilesIn(stmt, "triggers/");
     }
 
-    private static void executeAllStatementOf(Statement stmt, String subfolder_path) {
+    private static void executeAllStatementFilesIn(Statement stmt, String subfolder_path) {
         File folder = new File(SQL_FOLDER_REL_PATH + subfolder_path);
         for (File f : folder.listFiles()) {
             if (f.isDirectory()) {
@@ -74,6 +74,32 @@ public class DBInteraction {
         return str.toString();
     }
 
+    public static void populateDatabaseFromFile (String subFilePath) throws IOException, SQLException, ClassNotFoundException {
+        establishConnection();
+        Statement stmt = con.createStatement();
+        try {
+            stmt.execute(String.format(DROP_DB_STATEMENT));
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            Start_up();
+            executeAllStatementsInFile(subFilePath);
+        }
+    }
+
+    private static void executeAllStatementsInFile(String subFilePath) throws SQLException, IOException {
+        File f = new File(SQL_FOLDER_REL_PATH + subFilePath);
+        Statement stmt = con.createStatement();
+        BufferedReader reader = new BufferedReader(new FileReader(f));
+        String line;
+        while((line = reader.readLine()) != null) {
+            stmt.execute(line);
+        }
+        reader.close();
+    }
+
     public static ResultSet getData(String data, String table, String whereClause) throws SQLException {
         Statement stmt = con.createStatement();
         return stmt.executeQuery(String.format(GET_DATA_TEMPLATE, data, table, whereClause));
@@ -96,8 +122,8 @@ public class DBInteraction {
             }
             finally {
                 Start_up();
-                executeAllStatementOf(stmt, "tests/setup/level0/");
-                executeAllStatementOf(stmt, "tests/setup/level0/level1/");
+                executeAllStatementFilesIn(stmt, "tests/setup/level0/");
+                executeAllStatementFilesIn(stmt, "tests/setup/level0/level1/");
             }
         } catch (SQLException e) {
             e.printStackTrace();

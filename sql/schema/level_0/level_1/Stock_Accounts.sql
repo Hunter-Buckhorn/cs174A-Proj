@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Stock_Accounts (
 	aid INT NOT NULL AUTO_INCREMENT,
-	uname VARCHAR(255) NOT NULL,
+	taxid VARCHAR(255) NOT NULL,
 	PRIMARY KEY (aid),
-	FOREIGN KEY (uname) REFERENCES Customers(uname)
+	FOREIGN KEY (taxid) REFERENCES Customers(taxid)
 )

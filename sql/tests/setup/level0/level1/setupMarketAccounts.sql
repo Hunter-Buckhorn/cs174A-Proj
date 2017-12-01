@@ -1,1 +1,1 @@
-INSERT INTO Market_Accounts (aid, balance, uname, day_of_the_month, running_balance_sum) VALUES (1, 1000 , "test", 30, 10);
+INSERT INTO Market_Accounts (aid, balance, taxid, day_of_the_month, running_balance_sum) VALUES (1, 1000 , "test", 30, 10);

@@ -11,6 +11,7 @@ public class Test_Utilities {
     public static final String S_AID_STUB = "1";
     public static final String SYM_STUB = "123";
     public static final String UNAME_STUB = "test";
+    public static final String TAXID_STUB = "test";
     public static final String PWD_STUB = "test";
     public static final float BALANCE_IN_STOCK_ACC_STUB = 10f;
     public static final float BALANCE_MARKET_ACCOUNT_STUB = 1000f;
