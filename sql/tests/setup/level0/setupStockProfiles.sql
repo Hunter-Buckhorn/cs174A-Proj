@@ -1,1 +1,1 @@
-INSERT INTO Stock_Profiles (sym, price) VALUES (123, 1);
+INSERT INTO Stock_Profiles (sym, price) VALUES (123, 1.533);

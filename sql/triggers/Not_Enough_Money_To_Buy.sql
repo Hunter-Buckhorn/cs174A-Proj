@@ -2,7 +2,7 @@ CREATE TRIGGER IF NOT EXISTS Not_Enough_Money_To_Buy
 BEFORE INSERT ON Buy_Transactions
 FOR EACH ROW
 BEGIN
-	DECLARE cur_acc_bal DECIMAL;
+	DECLARE cur_acc_bal DECIMAL(18,3);
 	SELECT balance INTO cur_acc_bal
     FROM Market_Accounts
     WHERE aid = NEW.m_aid;

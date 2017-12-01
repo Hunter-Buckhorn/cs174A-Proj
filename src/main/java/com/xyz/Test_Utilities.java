@@ -13,9 +13,11 @@ public class Test_Utilities {
     public static final String UNAME_STUB = "test";
     public static final String TAXID_STUB = "test";
     public static final String PWD_STUB = "test";
-    public static final float BALANCE_IN_STOCK_ACC_STUB = 10f;
+    public static final float BALANCE_IN_STOCK_ACC_STUB = 15.123f;
     public static final float BALANCE_MARKET_ACCOUNT_STUB = 1000f;
-    public static final float STOCK_PRICE_STUB = 1f;
+    public static final float STOCK_PRICE_STUB = 1.533f;
+    public static final int DAY_OF_THE_MONTH_STUB = 30;
+    public static final float RUNNING_BALANCE_SUM_STUB = 10.234f;
 
     public static void pass(String testname) {
         System.out.println(String.format(PASS_TEMPLATE, testname));

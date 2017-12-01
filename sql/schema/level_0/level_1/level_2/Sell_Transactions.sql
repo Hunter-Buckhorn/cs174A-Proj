@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS Sell_Transactions (
 	s_aid INT NOT NULL,
 	sym CHAR(3) NOT NULL,
 	amount DECIMAL(18,3),
-	pps DECIMAL,
+	pps DECIMAL(18,3),
     date DATE,
 	PRIMARY KEY (tid),
     FOREIGN KEY (m_aid) REFERENCES Market_Accounts(aid),

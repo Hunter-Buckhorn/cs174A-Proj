@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS Stock_Profiles (
 	sym CHAR(3) NOT NULL,
-	dcp DECIMAL,
-	price DECIMAL,
+	dcp DECIMAL(18,3),
+	price DECIMAL(18,3),
 	DOB DATE,
 	name VARCHAR(255),
 	PRIMARY KEY (sym)
