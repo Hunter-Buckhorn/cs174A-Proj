@@ -1,0 +1,1 @@
+INSERT INTO Customers (uname, is_admin) VALUES("test", FALSE);

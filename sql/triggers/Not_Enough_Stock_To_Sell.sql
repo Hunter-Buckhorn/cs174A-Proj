@@ -3,6 +3,7 @@ BEFORE INSERT ON Sell_Transactions
 FOR EACH ROW
 BEGIN
 	DECLARE current_stock_amount DECIMAL(18,3);
+	SET current_stock_amount = -1.000;
 	SELECT balance INTO current_stock_amount
     FROM In_Stock_Acc
     WHERE sym = NEW.sym

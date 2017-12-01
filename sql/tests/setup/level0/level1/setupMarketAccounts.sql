@@ -1,0 +1,1 @@
+INSERT INTO Market_Accounts (aid, balance, uname) VALUES (1, 1000 , "test");

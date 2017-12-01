@@ -1,0 +1,1 @@
+INSERT INTO Stock_Profiles (sym) VALUES (123);
