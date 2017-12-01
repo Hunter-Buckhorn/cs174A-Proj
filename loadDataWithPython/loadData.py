@@ -41,12 +41,12 @@ with open("Stock_Profiles.txt", "r") as stock_profiles:
         sym,_,_,_,movie,role,year,value = line.strip().split(",")
         print(SQLContract_Signed.format(sym, movie, year, value, role))
 
-SQLMarket_Accounts = 'INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month) VALUES ("{}",{},"{}",{});'
+SQLMarket_Accounts = 'INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("{}",{},"{}",{}, {});'
 
 with open("Market.txt", "r") as market:
     for line in market:
         taxid,aid, balance = line.strip().split(",")
-        print(SQLMarket_Accounts.format(aid, balance, taxid, 16))
+        print(SQLMarket_Accounts.format(aid, balance, taxid, 16, 16 * float(balance)))
 
 SQLStockAccounts = 'INSERT INTO Stock_Accounts (taxid) VALUES("{}")'
 SQLIn_Stock_Acc = 'INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("{}", {}, {});'
