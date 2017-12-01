@@ -3,6 +3,7 @@ package com.xyz;
 public class Test_Utilities {
     private static final String PASS_TEMPLATE = "%s: PASSED";
     private static final String FAIL_TEMPLATE = "%s: FAILED: %s";
+    public static final String SQL_CUSTOM_FAIL_STATE = "45000";
     public static final float TOLERANCE = 0.001f;
 
     public static void pass(String testname) {

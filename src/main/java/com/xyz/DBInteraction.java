@@ -30,7 +30,7 @@ public class DBInteraction {
 
     private static void establishConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
-        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projdb", "root", "root");
+        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/", "root", "root");
     }
 
     private static void establishSchema(Statement stmt) {
@@ -74,31 +74,14 @@ public class DBInteraction {
         return str.toString();
     }
 
-    public static ResultSet getData(String data, String table, String whereClause) {
-        ResultSet res = null;
-        try{
-            Statement stmt = con.createStatement();
-            res = stmt.executeQuery(String.format(GET_DATA_TEMPLATE, data, table, whereClause));
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally {
-            return res;
-        }
+    public static ResultSet getData(String data, String table, String whereClause) throws SQLException {
+        Statement stmt = con.createStatement();
+        return stmt.executeQuery(String.format(GET_DATA_TEMPLATE, data, table, whereClause));
     }
 
-    public static int insertData(String table, String cols, String vals) {
-        int res = 0;
-        try{
-            Statement stmt = con.createStatement();
-            res = stmt.executeUpdate(String.format(INSERT_DATA_TEMPLATE, table, cols, vals));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally {
-            return res;
-        }
+    public static int insertData(String table, String cols, String vals) throws SQLException {
+        Statement stmt = con.createStatement();
+        return stmt.executeUpdate(String.format(INSERT_DATA_TEMPLATE, table, cols, vals));
     }
 
     public static void setupTestDB() {

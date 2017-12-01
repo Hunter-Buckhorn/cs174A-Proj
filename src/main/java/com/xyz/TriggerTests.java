@@ -7,195 +7,226 @@ import static com.xyz.Test_Utilities.*;
 
 public class TriggerTests {
    public static void main(String[] args) {
-        NotEnoughStockToSellTest1();
-        NotEnoughStockToSellTest2();
+       NotEnoughStockToSellTest();
+       NotEnoughStockToSellTest_NoStockInAccounts();
+       AfterStockSaleTest_AddMoney();
+       AfterStockSaleTest_SubtractStock();
+       DepositTransactionTest();
+       WithdrawWithoutEnoughMoney();
+       WithdrawWithEnoughMoney();
+       NewMarketAccUnder1000Test();
+       NotEnoughMoneyToBuyTest();
+       AfterPurchaseTest_CreateNewInStockAcc();
+       AfterPurchaseTest_AddTheStock();
+       AfterPurchaseTest_ReduceTheMoney();
+    }
+
+    private static void NotEnoughStockToSellTest_NoStockInAccounts() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        DBInteraction.setupTestDB();
         try {
-            AfterStockSaleTest();
+            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount)", "1,1,123,10");
         } catch (SQLException e) {
+            if(e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
+            else {
+                fail(test_name, e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void NotEnoughStockToSellTest() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        DBInteraction.setupTestDB();
+        try {
+            DBInteraction.insertData("In_Stock_Acc", "","123,1,10");
+            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount)", "1,1,123,11");
+        } catch (SQLException e) {
+            if(e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
+            else {
+                fail(test_name, e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void AfterStockSaleTest_SubtractStock() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        DBInteraction.setupTestDB();
+        try {
+            DBInteraction.insertData("In_Stock_Acc", "","123,1,10");
+            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, pps)", "1,1,123,1,1");
+            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", "WHERE aid = 1");
+            float expected = 981.000f;
+            res.next();
+            float actual = res.getFloat("balance");
+            if (Math.abs(expected - actual) < TOLERANCE) pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
             e.printStackTrace();
         }
-        DepositTransactionTest();
-        WithdrawWithoutEnoughMoney();
-        WithdrawWithEnoughMoney();
-        NewMarketAccUnder1000Test();
-        NotEnoughMoneyToBuyTest();
-        AfterPurchaseTest_CreateNewInStockAcc();
-        AfterPurchaseTest_AddTheStock();
-        AfterPurchaseTest_ReduceTheMoney();
     }
 
-    private static void NotEnoughStockToSellTest1() {
-        // WHEN THERE IS NO ASSOCIATION BETWEEN STOCK AND STOCK_ACCOUNTS
+    private static void AfterStockSaleTest_AddMoney() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        int num_row_affected = DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount)", "1,1,123,10");
-        if (num_row_affected == 0) {
-            pass(test_name);
-        }
-        else {
-            fail(test_name, "");
-        }
+        try {
+           DBInteraction.insertData("In_Stock_Acc", "", "123,1,10");
+           DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, pps)", "1,1,123,1,1");
+           ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", "WHERE aid = 1 AND sym = 123");
+           float expected = 9.000f;
+           res.next();
+           float actual = res.getFloat("balance");
+           if (Math.abs(expected - actual) < TOLERANCE) pass(test_name);
+           else fail(test_name, "");
+       }
+       catch (SQLException e) {
+           fail(test_name, e.getMessage());
+           e.printStackTrace();
+       }
     }
 
-    private static void NotEnoughStockToSellTest2() {
-        // HAS THE STOCK BUT NOT THE AMOUNT
-        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
-        DBInteraction.setupTestDB();
-        DBInteraction.insertData("In_Stock_Acc", "","123,1,10");
-        int num_row_affected = DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount)", "1,1,123,11");
-        if (num_row_affected == 0) {
-            pass(test_name);
-        }
-        else {
-            fail(test_name, "");
-        }
-    }
 
-    private static void AfterStockSaleTest() throws SQLException {
+        private static void DepositTransactionTest() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        DBInteraction.insertData("In_Stock_Acc", "","123,1,10");
-        DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, pps)", "1,1,123,1,1");
-        ResultSet res1 = DBInteraction.getData("balance", "Market_Accounts", "WHERE aid = 1");
-        ResultSet res2 = DBInteraction.getData("balance", "In_Stock_Acc", "WHERE aid = 1 AND sym = 123");
-        float expected1 = 981.000f;
-        res1.next();
-        float actual1 = res1.getFloat("balance");
-        float expected2 = 9.000f;
-        res2.next();
-        float actual2 = res2.getFloat("balance");
-        if (Math.abs(expected1 - actual1) < TOLERANCE &&
-                Math.abs(expected2 - actual2) < TOLERANCE) {
-            pass(test_name);
+        try {
+            DBInteraction.insertData("Deposit_Transactions", "(aid, amount)", "1, 100");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+            return;
         }
-        else if (Math.abs(expected1 - actual1) > TOLERANCE) {
-            fail(test_name, "Not Adding the correct amount of money");
-        }
-        else {
-            fail(test_name, "Not Subtracting the correct amount of stock");
-        }
-    }
-
-    private static void DepositTransactionTest() {
-        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
-        DBInteraction.setupTestDB();
-        DBInteraction.insertData("Deposit_Transactions", "(aid, amount)", "1, 100");
-        ResultSet res = DBInteraction.getData("balance", "Market_Accounts", "WHERE aid = 1");
         float actual = 0.000f;
         try {
+            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", "WHERE aid = 1");
             res.next();
             actual = res.getFloat("balance");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
             float expected = 1100f;
-            if ( Math.abs(actual - expected) < TOLERANCE ){
-                pass(test_name);
-            } else {
-                fail(test_name, "");
-            }
+            if ( Math.abs(actual - expected) < TOLERANCE )pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private static void WithdrawWithoutEnoughMoney() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        int num_row_affected = DBInteraction.insertData("Withdraw_Transactions", "(aid, amount)", "1, 11000");
-        if (num_row_affected == 0 ){
-            pass(test_name);
-        }
-        else {
-            fail(test_name, "");
+        try {
+            DBInteraction.insertData("Withdraw_Transactions", "(aid, amount)", "1, 11000");
+        } catch (SQLException e) {
+            if (e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
+            else {
+                fail(test_name, e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
     private static void WithdrawWithEnoughMoney() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        DBInteraction.insertData("Withdraw_Transactions", "(aid, amount)", "1, 100");
-        ResultSet res = DBInteraction.getData("balance", "Market_Accounts", "WHERE aid = 1");
+        try {
+            DBInteraction.insertData("Withdraw_Transactions", "(aid, amount)", "1, 100");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+            return;
+        }
         float actual = 0.000f;
         try {
+            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", "WHERE aid = 1");
             res.next();
             actual = res.getFloat("balance");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
             float expected = 900f;
-            if (Math.abs(expected - actual) < TOLERANCE) {
-                pass(test_name);
-            }
-            else {
-                fail(test_name, "");
-            }
+            if (Math.abs(expected - actual) < TOLERANCE) pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private static void NewMarketAccUnder1000Test() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        int num_row_affected = DBInteraction.insertData("Market_Accounts","(aid, uname, balance)", "2, \"test\", 10");
-        if (num_row_affected == 0) pass(test_name);
-        else fail(test_name, "");
+        try {
+            DBInteraction.insertData("Market_Accounts","(aid, uname, balance)", "2, \"test\", 10");
+        } catch (SQLException e) {
+            if (e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
+            else {
+                fail(test_name, e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void NotEnoughMoneyToBuyTest() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        int num_row_affected = DBInteraction.insertData("Buy_Transactions","(m_aid, s_aid, sym, amount, pps)", "1,1,123,1,999");
-        if(num_row_affected == 0) pass(test_name);
-        else fail(test_name, "");
+        try {
+            DBInteraction.insertData("Buy_Transactions","(m_aid, s_aid, sym, amount, pps)", "1,1,123,1,999");
+        } catch (SQLException e) {
+            if(e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
+            else {
+                fail(test_name, e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void AfterPurchaseTest_CreateNewInStockAcc() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", "1,1,123,1,1");
-        ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", "WHERE aid = 1 AND sym = 123");
         try {
+            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", "1,1,123,1,1");
+            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", "WHERE aid = 1 AND sym = 123");
             if (res.next() == true) pass(test_name);
             else fail(test_name, "");
         } catch (SQLException e) {
+            fail(test_name,e.getMessage());
             e.printStackTrace();
-            fail(test_name,"");
         }
     }
 
     private static void AfterPurchaseTest_AddTheStock() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        DBInteraction.insertData("In_Stock_Acc", "","123,1,10");
-        DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", "1,1,123,1,1");
-        ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", "WHERE aid = 1 AND sym = 123");
         float actual = 0.0f;
         try {
+            DBInteraction.insertData("In_Stock_Acc", "","123,1,10");
+            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", "1,1,123,1,1");
+            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", "WHERE aid = 1 AND sym = 123");
             res.next();
             actual = res.getFloat("balance");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
             float expected = 11f;
             if (Math.abs(expected - actual) < TOLERANCE) pass(test_name);
             else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private static void AfterPurchaseTest_ReduceTheMoney() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
-        DBInteraction.insertData("In_Stock_Acc", "","123,1,10");
-        DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", "1,1,123,1,1");
-        ResultSet res = DBInteraction.getData("balance", "Market_Accounts", "WHERE aid = 1");
         float actual = 0.0f;
         try {
+            DBInteraction.insertData("In_Stock_Acc", "","123,1,10");
+            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", "1,1,123,1,1");
+            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", "WHERE aid = 1");
             res.next();
             actual = res.getFloat("balance");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
             float expected = 979f;
             if (Math.abs(expected - actual) < TOLERANCE) pass(test_name);
             else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
         }
     }
 }
