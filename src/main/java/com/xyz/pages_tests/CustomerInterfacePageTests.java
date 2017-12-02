@@ -20,6 +20,10 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         getStockPriceTest();
         getStockTransactionsForBuyTest();
         getStockTransactionsForSellTest();
+        ListMovieInfoTest();
+        ListTopMoviesTest_Success();
+        ListTopMoviesTest_Fail();
+        GetReviewsTest();
     }
 
     private static void setUp() {
@@ -195,4 +199,57 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
             e.printStackTrace();
         }
     }
+
+    private static void ListMovieInfoTest() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        try {
+            ResultSet res = ListMovieInfoHelper("Chicago");
+            if (res.next()) pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void ListTopMoviesTest_Success() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        try {
+            ResultSet res = ListTopMoviesHelper("2002", "2004");
+            if(res.next()) pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void ListTopMoviesTest_Fail() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        try {
+            ResultSet res = ListTopMoviesHelper("1990", "2000");
+            if(res.next()) fail(test_name, "");
+            else pass(test_name);
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void GetReviewsTest() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        try {
+            ResultSet res = GetReviewsHelper("Chicago");
+            if (res.next()) pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }

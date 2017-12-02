@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import static com.xyz.DBInteraction.MOVIES_DB;
+import static com.xyz.DBInteraction.TEST_DB;
+
 public class CustomerInterfacePage {
     protected static final String NEW_LINE = System.getProperty("line.separator");
     protected static String UNAME;
@@ -49,13 +52,22 @@ public class CustomerInterfacePage {
                     ListStockPricePrompt();
                     break;
                 case 8:
+                    ListMovieInfoPrompt();
                     break;
                 case 9:
-                    break userInputLoop;
+                    ListTopMoviesPrompt();
+                    break;
                 case 10:
+                    GetReviewsPrompt();
+                    break;
+                case 11:
+                    break;
+                case 12:
+                    break userInputLoop;
+                case 13:
                     break;
                 default:
-                    break;
+                break;
             }
         }
     }
@@ -71,10 +83,13 @@ public class CustomerInterfacePage {
                 "6: Show Transactions" + NEW_LINE +
                 "7: List Current Price of Stock" + NEW_LINE +
                 "8: List Movie information" + NEW_LINE +
-                "9: Exit"
+                "9: List Top Movies" + NEW_LINE +
+                "10: Get Reviews" + NEW_LINE +
+                "11: Sign Out" + NEW_LINE +
+                "12: Exit"
          );
         if (IS_ADMIN) {
-            System.out.println("10: Switch Interface");
+            System.out.println("13: Switch Interface");
         }
     }
 
@@ -266,5 +281,89 @@ public class CustomerInterfacePage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void ListMovieInfoPrompt() {
+        System.out.println("Movie name: ");
+        String movie_name = in.next();
+        try {
+            ResultSet res = ListMovieInfoHelper(movie_name);
+            while (res.next()) {
+                System.out.println(
+                        String.format("Name: %s", movie_name) + NEW_LINE +
+                        String.format("Rating: %s", res.getString("rating")) + NEW_LINE +
+                        String.format("Production Year: ", res.getString("production_year"))
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(String.format("%s not in the system", movie_name));
+            e.printStackTrace();
+        }
+        DBInteraction.useDB(TEST_DB, null);
+    }
+
+    protected static ResultSet ListMovieInfoHelper(String moviename) throws SQLException {
+        DBInteraction.useDB(MOVIES_DB, null);
+        return DBInteraction.getData("*", "movies", String.format("WHERE title = \"%s\"", moviename));
+    }
+
+    private static void ListTopMoviesPrompt() {
+        System.out.println("What time period are you looking at? [format: yyyy-yyyy]");
+        String year_start, year_end;
+        try {
+            String[] period = in.next().trim().split("-");
+            year_start = period[0]; year_end = period[1];
+        } catch (Exception e) {
+            System.out.println("Wrong format");
+            in = new Scanner(System.in);
+            return;
+        }
+        if(Integer.parseInt(year_end) < Integer.parseInt(year_start)) {
+            System.out.println("Year end > Year Start");
+            return;
+        }
+        try {
+            ResultSet res = ListTopMoviesHelper(year_start, year_end);
+            while (res.next()) {
+                System.out.println(res.getString("title"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DBInteraction.useDB(TEST_DB, null);
+    }
+
+    protected static ResultSet ListTopMoviesHelper(String year_begin, String year_end) throws SQLException {
+        DBInteraction.useDB(MOVIES_DB, null);
+        return DBInteraction.getData("title", "movies", String.format("WHERE rating >= 5.0 AND production_year BETWEEN %s AND %s", year_begin, year_end));
+    }
+
+    private static void GetReviewsPrompt() {
+        System.out.println("Give me the Movie Title:");
+        String title;
+        try {
+            title = in.next().trim();
+        } catch (Exception e) {
+            System.out.println("Shit happens");
+            in = new Scanner(System.in);
+            return;
+        }
+        try {
+            ResultSet res = GetReviewsHelper(title);
+            while (res.next()) {
+                System.out.println(res.getString("review"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DBInteraction.useDB(TEST_DB, null);
+    }
+
+    protected static ResultSet GetReviewsHelper(String title) throws SQLException {
+        DBInteraction.useDB(MOVIES_DB, null);
+        ResultSet res = DBInteraction.getData("id", "movies", String.format("WHERE title = \"%s\"", title));
+        res.next();
+        int movieid = res.getInt("id");
+        return DBInteraction.getData("review","reviews", String.format("WHERE movie_id = %d", movieid));
     }
 }

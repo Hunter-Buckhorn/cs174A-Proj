@@ -4,33 +4,52 @@ import java.io.*;
 import java.sql.*;
 
 public class DBInteraction {
-    private static final String CREATE_DB_STATEMENT = "CREATE DATABASE IF NOT EXISTS testdb;";
-    private static final String DROP_DB_STATEMENT = "DROP DATABASE testdb;";
-    private static final String USE_DB_STATEMENT = "USE testDB;";
+    private static final String CREATE_DB_STATEMENT = "CREATE DATABASE IF NOT EXISTS %s;";
+    private static final String DROP_DB_STATEMENT = "DROP DATABASE %s;";
+    private static final String USE_DB_STATEMENT = "USE %s;";
     private static final String SQL_FOLDER_REL_PATH = "./sql/";
     private static final String GET_DATA_TEMPLATE = "SELECT %s FROM %s %s;";
     private static final String INSERT_DATA_TEMPLATE = "INSERT INTO %s %s VALUES (%s)";
     private static final String UPDATE_DATA_TEMPLATE = "UPDATE %s SET %s WHERE %s";
+    private static final String USER = "root";
+    private static final String PASSWORD = "root";
+    public static final String TEST_DB = "testdb";
+    public static final String MOVIES_DB = "Moviesdb";
 
     private static Connection con = null;
 
-    public static void Start_up() {
+    public static void Start_up(String url, String user, String pwd) {
         try {
             if (con == null) {
-                establishConnection();
+                establishConnection(url, user, pwd);
             }
             Statement stmt = con.createStatement();
-            stmt.execute(CREATE_DB_STATEMENT);
-            stmt.execute(USE_DB_STATEMENT);
+            stmt.execute(String.format(CREATE_DB_STATEMENT, TEST_DB));
+            useDB(TEST_DB, stmt);
             establishSchema(stmt);
         } catch (Exception e) {
             System.out.println("Error:" + e);
         }
     }
 
-    private static void establishConnection() throws SQLException, ClassNotFoundException {
+    public static void useDB(String tablename, Statement stmt) {
+        if (stmt == null) {
+            try {
+                stmt = con.createStatement();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            stmt.execute(String.format(USE_DB_STATEMENT, tablename));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void establishConnection(String url, String user, String pwd) throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
-        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/", "root", "root");
+        con = DriverManager.getConnection(url, user, pwd);
     }
 
     private static void establishSchema(Statement stmt) {
@@ -75,18 +94,18 @@ public class DBInteraction {
     }
 
     public static void populateDatabaseFromFile (String subFilePath) throws IOException, SQLException, ClassNotFoundException {
-        establishConnection();
+        establishConnection("jdbc:mysql://localhost:3306/", USER, PASSWORD);
         Statement stmt = con.createStatement();
+        dropDB(stmt, TEST_DB);
+        Start_up("jdbc:mysql://localhost:3306/", USER, PASSWORD);
+        executeAllStatementsInFile(subFilePath);
+    }
+
+    private static void dropDB(Statement stmt, String dbname) {
         try {
-            stmt.execute(String.format(DROP_DB_STATEMENT));
+            stmt.execute(String.format(DROP_DB_STATEMENT, dbname));
         }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally {
-            Start_up();
-            executeAllStatementsInFile(subFilePath);
-        }
+        catch (SQLException e) {}
     }
 
     private static void executeAllStatementsInFile(String subFilePath) throws SQLException, IOException {
@@ -112,19 +131,12 @@ public class DBInteraction {
 
     public static void setupTestDB() {
         try{
-            establishConnection();
+            establishConnection("jdbc:mysql://localhost:3306/", USER, PASSWORD);
             Statement stmt = con.createStatement();
-            try {
-                stmt.execute(String.format(DROP_DB_STATEMENT));
-            }
-            catch (SQLException e) {
-                e.printStackTrace();
-            }
-            finally {
-                Start_up();
-                executeAllStatementFilesIn(stmt, "tests/setup/level0/");
-                executeAllStatementFilesIn(stmt, "tests/setup/level0/level1/");
-            }
+            dropDB(stmt, TEST_DB);
+            Start_up("jdbc:mysql://localhost:3306/", USER, PASSWORD);
+            executeAllStatementFilesIn(stmt, "tests/setup/level0/");
+            executeAllStatementFilesIn(stmt, "tests/setup/level0/level1/");
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
