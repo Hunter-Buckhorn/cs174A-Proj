@@ -18,6 +18,7 @@ public class CustomerInterfacePage {
     protected static String DATE;
     protected static boolean IS_ADMIN;
     protected static Scanner in;
+    protected static double MONTHLY_INTEREST = 0.0025; // 3% / 12
 
     protected static void success() {
         System.out.println("SUCCESS!");
@@ -186,49 +187,79 @@ public class CustomerInterfacePage {
 
     private static void Buy(float amt, String sym) {
         try {
-            Buy_Helper(amt, sym);
+            float pps = getStockPrice(sym);
+            Buy_Helper(amt, sym, pps);
             success();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    protected static void Buy_Helper(float amt, String sym) throws SQLException {
-        float pps = getStockPrice(sym);
-        DBInteraction.insertData("Buy_Transactions", "", String.format("0, %s, %s, %s, %.3f, %f, \'%s\'", M_AID, S_AID, sym, amt, pps, DATE));
-    }
-
-    private static void Sell_Prompt() {
-        try {
-            System.out.println("What do you want to sell?");
-            String sym = in.next();
-            System.out.println(String.format("Current Price is %s", getStockPrice(sym)));
-            System.out.println("How many do you want to sell?");
-            float amt = in.nextFloat();
-            Sell(amt, sym);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void Sell(float amt, String sym) {
-        try {
-            Sell_Helper(amt, sym);
-            success();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    protected static void Sell_Helper(float amt, String sym) throws SQLException {
-        float pps = getStockPrice(sym);
-        DBInteraction.insertData("Sell_Transactions", "(tid, m_aid, s_aid, sym, amount, pps, date)", String.format("NULL, %s, %s, %s, %.3f, %f, \'%s\'", M_AID, S_AID, sym, amt, pps, DATE));
+    protected static void Buy_Helper(float amt, String sym, float pps) throws SQLException {
+        DBInteraction.insertData("Buy_Transactions", "(m_aid, s_aid, sym, amount, pps, date)",
+                String.format("%s, %s, %s, %.3f, %f, \'%s\'", M_AID, S_AID, sym, amt, pps, DATE));
     }
 
     protected static float getStockPrice(String sym) throws SQLException {
         ResultSet res = DBInteraction.getData("price", "Stock_Profiles", String.format("WHERE sym = %s", sym));
         res.next();
         return res.getFloat("price");
+    }
+
+
+    private static void Sell_Prompt() {
+        try {
+            System.out.println("What do you want to sell?");
+            String sym = in.next();
+            while (true) {
+                System.out.println(String.format("Current Price is %s", getStockPrice(sym)));
+                System.out.println("Choose Your Stock you want to sell?");
+                showCurrentStockOwned(sym);
+                float b_pps = in.nextFloat();
+                System.out.println("How many do you want to sell?");
+                float amt = in.nextFloat();
+                Sell(amt, sym, b_pps);
+                System.out.println("Done? Y/N");
+                boolean done = in.next().toUpperCase().trim().equals("Y");
+                if (done) {
+                    ChargeCommission(M_AID);
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void showCurrentStockOwned(String sym) {
+        try {
+            ResultSet res = DBInteraction.getData("balance, pps", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = %s", S_AID, sym));
+            while(res.next()) {
+                System.out.println(String.format("%f: %f", res.getFloat("pps"), res.getFloat("balance")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void Sell(float amt, String sym, float b_pps) {
+        try {
+            Sell_Helper(amt, sym, b_pps);
+            success();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    protected static void Sell_Helper(float amt, String sym, float b_pps) throws SQLException {
+        float pps = getStockPrice(sym);
+        DBInteraction.insertData("Sell_Transactions", "(tid, m_aid, s_aid, sym, amount, s_pps, date, b_pps)",
+                String.format("NULL, %s, %s, %s, %.3f, %f, \'%s\', %f", M_AID, S_AID, sym, amt, pps, DATE, b_pps));
+    }
+
+    protected static void ChargeCommission(String m_AID) throws SQLException {
+        DBInteraction.updateData("Market_Accounts", "balance = balance - 20", String.format("WHERE aid = %s", m_AID));
+        DBInteraction.updateData("Market_Accounts", "tot_commission = tot_commission + 20", String.format("WHERE aid = %s", m_AID));
     }
 
     private static void ShowBalance() {

@@ -7,10 +7,11 @@ public class DBInteraction {
     private static final String CREATE_DB_STATEMENT = "CREATE DATABASE IF NOT EXISTS %s;";
     private static final String DROP_DB_STATEMENT = "DROP DATABASE %s;";
     private static final String USE_DB_STATEMENT = "USE %s;";
+    private static final String DROP_TABLE_STATEMENT = "DROP TABLE %s;";
     private static final String SQL_FOLDER_REL_PATH = "./sql/";
     private static final String GET_DATA_TEMPLATE = "SELECT %s FROM %s %s;";
     private static final String INSERT_DATA_TEMPLATE = "INSERT INTO %s %s VALUES (%s)";
-    private static final String UPDATE_DATA_TEMPLATE = "UPDATE %s SET %s WHERE %s";
+    private static final String UPDATE_DATA_TEMPLATE = "UPDATE %s SET %s %s";
     private static final String USER = "root";
     private static final String PASSWORD = "root";
     public static final String TEST_DB = "testdb";
@@ -56,11 +57,19 @@ public class DBInteraction {
         executeAllStatementFilesIn(stmt, "schema/level_0/");
         executeAllStatementFilesIn(stmt, "schema/level_0/level_1/");
         executeAllStatementFilesIn(stmt, "schema/level_0/level_1/level_2/");
+        executeAllStatementFilesIn(stmt, "schema/level_0/level_1/level_2/level_3/");
         executeAllStatementFilesIn(stmt, "utilities/");
         executeAllStatementFilesIn(stmt, "triggers/");
     }
 
-    private static void executeAllStatementFilesIn(Statement stmt, String subfolder_path) {
+    public static void executeAllStatementFilesIn(Statement stmt, String subfolder_path) {
+        if(stmt == null) {
+            try {
+                stmt = con.createStatement();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         File folder = new File(SQL_FOLDER_REL_PATH + subfolder_path);
         for (File f : folder.listFiles()) {
             if (f.isDirectory()) {
@@ -73,6 +82,13 @@ public class DBInteraction {
                 System.out.println("Error: " + f.getName() + ": " + e);
             }
         }
+    }
+
+    public static ResultSet executeQuery(String querry_subfolder_path, String ... args) throws SQLException {
+        File f = new File(SQL_FOLDER_REL_PATH + querry_subfolder_path);
+        String sql_stmt = String.format(turnFileContentToString(f), args);
+        Statement stmt = con.createStatement();
+        return stmt.executeQuery(sql_stmt);
     }
 
     private static String turnFileContentToString(File f) {
@@ -142,5 +158,15 @@ public class DBInteraction {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int updateData(String table, String colValPairs, String whereClause) throws SQLException {
+        Statement stmt = con.createStatement();
+        return stmt.executeUpdate(String.format(UPDATE_DATA_TEMPLATE, table, colValPairs, whereClause));
+    }
+
+    public static void DropTable(String table) throws SQLException {
+        Statement stmt = con.createStatement();
+        stmt.execute(String.format(DROP_TABLE_STATEMENT, table));
     }
 }

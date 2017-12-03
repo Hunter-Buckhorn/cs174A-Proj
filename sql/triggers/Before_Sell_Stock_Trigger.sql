@@ -7,9 +7,12 @@ BEGIN
 	SELECT balance INTO current_stock_amount
     FROM In_Stock_Acc
     WHERE sym = NEW.sym
-    AND aid = NEW.s_aid;
+    AND aid = NEW.s_aid
+    AND pps = NEW.b_pps;
     IF current_stock_amount < NEW.amount THEN
         SIGNAL SQLSTATE '45000'
 		    SET MESSAGE_TEXT = "Not enough stocks to sell";
+    ELSE
+        SET NEW.earnings = (NEW.s_pps - NEW.b_pps) * NEW.amount;
 END IF;
 END;

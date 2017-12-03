@@ -28,42 +28,42 @@ INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance
 INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("010",35000,"1123",16, 560000.0);
 INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("011",30500,"3306",16, 488000.0);
 INSERT INTO Stock_Accounts (taxid) VALUES("1022")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SKB", 1, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 1, 100, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("3045")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SMD", 2, 500);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SMD", 2, 500, 71.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("3045")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("STC", 3, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("STC", 3, 100, 32.50);
 INSERT INTO Stock_Accounts (taxid) VALUES("2034")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("STC", 4, 250);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("STC", 4, 250, 32.50);
 INSERT INTO Stock_Accounts (taxid) VALUES("4093")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SKB", 5, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 5, 100, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("4093")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SMD", 6, 500);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SMD", 6, 500, 71.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("4093")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("STC", 7, 50);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("STC", 7, 50, 32.50);
 INSERT INTO Stock_Accounts (taxid) VALUES("1234")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SMD", 8, 1000);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SMD", 8, 1000, 71.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("8956")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SKB", 9, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 9, 100, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("2341")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SMD", 10, 300);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SMD", 10, 300, 71.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("0456")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SKB", 11, 500);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 11, 500, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("0456")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("STC", 12, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("STC", 12, 100, 32.50);
 INSERT INTO Stock_Accounts (taxid) VALUES("0456")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SMD", 13, 200);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SMD", 13, 200, 71.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("3455")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SKB", 14, 1000);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 14, 1000, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("1123")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SKB", 15, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 15, 100, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("1123")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SMD", 16, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SMD", 16, 100, 71.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("1123")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("STC", 17, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("STC", 17, 100, 32.50);
 INSERT INTO Stock_Accounts (taxid) VALUES("3306")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SKB", 18, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 18, 100, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("3306")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("STC", 19, 200);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("STC", 19, 200, 32.50);
 INSERT INTO Stock_Accounts (taxid) VALUES("3306")
-INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("SMD", 20, 100);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SMD", 20, 100, 71.00);

@@ -1,6 +1,7 @@
 package com.xyz;
 
 import com.xyz.pages.CustomerInterfacePage;
+import com.xyz.pages.ManagerInterfacePages;
 
 import java.util.Scanner;
 
@@ -50,6 +51,7 @@ public class TimeManager {
     private static void setDateHelper(String new_date) {
         CUR_DATE = new_date;
         CustomerInterfacePage.setDate(CUR_DATE);
+        ManagerInterfacePages.setDate(CUR_DATE);
     }
 
     protected static void handleSetDateEvent() {}

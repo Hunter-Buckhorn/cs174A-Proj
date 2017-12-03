@@ -20,6 +20,8 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         getStockPriceTest();
         getStockTransactionsForBuyTest();
         getStockTransactionsForSellTest();
+        ChargeCommissionTest_ReduceBalance();
+        ChargeCommissionTest_IncreaseTotCommission();
         ListMovieInfoTest();
         ListTopMoviesTest_Success();
         ListTopMoviesTest_Fail();
@@ -38,7 +40,8 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         float amt = 200f;
         try {
             Deposit_Helper(amt);
-            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE aid = %s", M_AID));
+            ResultSet res = DBInteraction.getData("balance",
+                    "Market_Accounts", String.format("WHERE aid = %s", M_AID));
             res.next();
             float expected = BALANCE_MARKET_ACCOUNT_STUB + amt;
             if (isEqual(expected, res.getFloat("balance"))) pass(test_name);
@@ -55,7 +58,8 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         float amt = 200f;
         try {
             Withdraw_Helper(amt);
-            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE aid = %s", M_AID));
+            ResultSet res = DBInteraction.getData("balance",
+                    "Market_Accounts", String.format("WHERE aid = %s", M_AID));
             res.next();
             float expected = BALANCE_MARKET_ACCOUNT_STUB - amt;
             if (isEqual(expected, res.getFloat("balance"))) pass(test_name);
@@ -71,9 +75,11 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         setUp();
         float amt = 1f;
         try {
-            InsertStubIntoIn_Stock_Acc();
-            Sell_Helper(amt, SYM_STUB);
-            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = %s", S_AID, SYM_STUB));
+            InsertStubIntoIn_Stock_Acc(null);
+            Sell_Helper(amt, SYM_STUB, STOCK_BUYING_PRICE_STUB);
+            ResultSet res = DBInteraction.getData("balance",
+                    "In_Stock_Acc",
+                    String.format("WHERE aid = %s AND sym = %s", S_AID, SYM_STUB));
             res.next();
             float expected = BALANCE_IN_STOCK_ACC_STUB - amt;
             if (isEqual(expected, res.getFloat("balance"))) pass(test_name);
@@ -89,11 +95,13 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         setUp();
         float amt = 1f;
         try {
-            InsertStubIntoIn_Stock_Acc();
-            Sell_Helper(amt, SYM_STUB);
-            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE aid = %s", M_AID));
+            InsertStubIntoIn_Stock_Acc(null);
+            Sell_Helper(amt, SYM_STUB, STOCK_BUYING_PRICE_STUB);
+            ResultSet res = DBInteraction.getData("balance",
+                    "Market_Accounts",
+                    String.format("WHERE aid = %s", M_AID));
             res.next();
-            float expected = BALANCE_MARKET_ACCOUNT_STUB + (amt * STOCK_PRICE_STUB) - 20;
+            float expected = BALANCE_MARKET_ACCOUNT_STUB + (amt * STOCK_PRICE_STUB);
             if (isEqual(expected, res.getFloat("balance"))) pass(test_name);
             else fail(test_name, "");
         } catch (SQLException e) {
@@ -107,12 +115,15 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         setUp();
         float amt = 1f;
         try {
-            InsertStubIntoIn_Stock_Acc();
-            Buy_Helper(amt, SYM_STUB);
-            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = %s", S_AID, SYM_STUB));
+            InsertStubIntoIn_Stock_Acc(null);
+            Buy_Helper(amt, SYM_STUB, STOCK_BUYING_PRICE_STUB);
+            ResultSet res = DBInteraction.getData("balance",
+                    "In_Stock_Acc",
+                    String.format("WHERE aid = %s AND sym = %s AND pps = %f", S_AID, SYM_STUB, STOCK_BUYING_PRICE_STUB));
             res.next();
             float expected = BALANCE_IN_STOCK_ACC_STUB + amt;
-            if (isEqual(expected, res.getFloat("balance"))) pass(test_name);
+            float actual = res.getFloat("balance");
+            if (isEqual(expected, actual)) pass(test_name);
             else fail(test_name, "");
         } catch (SQLException e) {
             fail(test_name, e.getMessage());
@@ -125,9 +136,11 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         setUp();
         float amt = 1f;
         try {
-            InsertStubIntoIn_Stock_Acc();
-            Buy_Helper(amt, SYM_STUB);
-            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE aid = %s", M_AID));
+            InsertStubIntoIn_Stock_Acc(null);
+            Buy_Helper(amt, SYM_STUB, STOCK_PRICE_STUB);
+            ResultSet res = DBInteraction.getData("balance",
+                    "Market_Accounts",
+                    String.format("WHERE aid = %s", M_AID));
             res.next();
             float expected = BALANCE_MARKET_ACCOUNT_STUB - (amt * STOCK_PRICE_STUB) - 20;
             if (isEqual(expected, res.getFloat("balance"))) pass(test_name);
@@ -172,7 +185,7 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         setUp();
         float amt = 1;
         try {
-            Buy_Helper(1, SYM_STUB);
+            Buy_Helper(1, SYM_STUB, STOCK_PRICE_STUB);
             ResultSet res = getStockTransactions(true);
             res.next();
             res.getInt("tid");
@@ -188,12 +201,29 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         setUp();
         float amt = 1;
         try {
-            InsertStubIntoIn_Stock_Acc();
-            Sell_Helper(1, SYM_STUB);
+            InsertStubIntoIn_Stock_Acc(null);
+            Sell_Helper(1, SYM_STUB, STOCK_BUYING_PRICE_STUB);
             ResultSet res = getStockTransactions(false);
             res.next();
             res.getInt("tid");
             pass(test_name);
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void ChargeCommissionTest_ReduceBalance() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        try {
+            ChargeCommission(M_AID_STUB);
+            ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE aid = %s", M_AID_STUB));
+            res.next();
+            float actual = res.getFloat("balance");
+            float expected = BALANCE_MARKET_ACCOUNT_STUB - 20;
+            if(isEqual(expected, actual)) pass(test_name);
+            else fail(test_name, "");
         } catch (SQLException e) {
             fail(test_name, e.getMessage());
             e.printStackTrace();
@@ -206,6 +236,23 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         try {
             ResultSet res = ListMovieInfoHelper("Chicago");
             if (res.next()) pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void ChargeCommissionTest_IncreaseTotCommission() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        try {
+            ChargeCommission(M_AID_STUB);
+            ResultSet res = DBInteraction.getData("tot_commission", "Market_Accounts", String.format("WHERE aid = %s", M_AID_STUB));
+            res.next();
+            float actual = res.getFloat("tot_commission");
+            float expected = 20;
+            if(isEqual(expected, actual)) pass(test_name);
             else fail(test_name, "");
         } catch (SQLException e) {
             fail(test_name, e.getMessage());

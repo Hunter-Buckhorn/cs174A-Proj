@@ -2,6 +2,7 @@
 print('INSERT INTO Customers (uname,pwd,phone,email,name,taxid,state,is_admin) VALUES ("admin","secret","(805)6374632","admin@stock.com","John Admin","1000","CA",TRUE);')
 
 currDate = "2013-3-16"
+symToPrice = {}
 
 SQLCustomers = 'INSERT INTO Customers (uname,pwd,phone,email,name,taxid,state,is_admin) VALUES ("{}","{}","{}","{}","{}","{}","{}",{});'
 with open("Customers.txt", "r") as customers:
@@ -32,6 +33,7 @@ def getDateFormat(dmyInLetters):
 with open("Stock_Profiles.txt", "r") as stock_profiles:
     for line in stock_profiles:
         sym, price,name,dob,_,_,_,_ = line.strip().split(",")
+        symToPrice[sym] = price
         print(SQLStock_Profiles.format(sym, price, price, getDateFormat(dob), name))
 
 SQLContract_Signed = 'INSERT INTO Contract_Signed (sym,movie,year,value,role) VALUES ("{}","{}",{},{},"{}");'
@@ -49,7 +51,7 @@ with open("Market.txt", "r") as market:
         print(SQLMarket_Accounts.format(aid, balance, taxid, 16, 16 * float(balance)))
 
 SQLStockAccounts = 'INSERT INTO Stock_Accounts (taxid) VALUES("{}")'
-SQLIn_Stock_Acc = 'INSERT INTO In_Stock_Acc (sym,aid,balance) VALUES ("{}", {}, {});'
+SQLIn_Stock_Acc = 'INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("{}", {}, {}, {});'
 
 with open("Stocks.txt", "r") as stocks:
     aid = 0
@@ -57,4 +59,4 @@ with open("Stocks.txt", "r") as stocks:
         aid += 1
         taxid,balance,sym = line.strip().split(",")
         print(SQLStockAccounts.format(taxid))
-        print(SQLIn_Stock_Acc.format(sym, aid, balance))
+        print(SQLIn_Stock_Acc.format(sym, aid, balance, symToPrice[sym]))
