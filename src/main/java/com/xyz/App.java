@@ -4,7 +4,6 @@ import com.xyz.pages.CustomerInterfacePage;
 import com.xyz.pages.LoginPage;
 import com.xyz.pages.ManagerInterfacePages;
 
-import javax.xml.transform.Result;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -18,12 +17,8 @@ public class App {
         printWelcomeMessage();
         TimeManager.Initialize(Start_date);
         try {
-            DBInteraction.populateDatabaseFromFile("load/TestingData.sql");
-            //DBInteraction.populateDatabaseFromFile("load/loadData.sql");
-
-            // set the initial balances
-            DBInteraction.updateData("Market_Accounts", "initial_balance = balance", "");
-
+            //DBInteraction.populateDatabaseFromFile("load/TestingData.sql");
+            DBInteraction.populateDatabaseFromFile("load/loadData.sql");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {

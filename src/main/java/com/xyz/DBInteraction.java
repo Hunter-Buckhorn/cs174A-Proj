@@ -16,11 +16,9 @@ public class DBInteraction {
     private static final String PASSWORD = "root";
     public static final String TEST_DB = "testdb";
     public static final String MOVIES_DB = "Moviesdb";
+    private static final String URI = "jdbc:mysql://localhost:3306/";
 
     private static Connection con = null;
-
-
-
 
     public static void Start_up(String url, String user, String pwd) {
         try {
@@ -30,6 +28,7 @@ public class DBInteraction {
             Statement stmt = con.createStatement();
             stmt.execute(String.format(CREATE_DB_STATEMENT, TEST_DB));
             useDB(TEST_DB, stmt);
+            executeAllStatementsInFile("load/dropOldTables.sql");
             establishSchema(stmt);
         } catch (Exception e) {
             System.out.println("Error:" + e);
@@ -113,10 +112,9 @@ public class DBInteraction {
     }
 
     public static void populateDatabaseFromFile (String subFilePath) throws IOException, SQLException, ClassNotFoundException {
-        establishConnection("jdbc:mysql://localhost:3306/", USER, PASSWORD);
+        establishConnection(URI, USER, PASSWORD);
         Statement stmt = con.createStatement();
-        dropDB(stmt, TEST_DB);
-        Start_up("jdbc:mysql://localhost:3306/", USER, PASSWORD);
+        Start_up(URI, USER, PASSWORD);
         executeAllStatementsInFile(subFilePath);
     }
 
@@ -150,10 +148,9 @@ public class DBInteraction {
 
     public static void setupTestDB() {
         try{
-            establishConnection("jdbc:mysql://localhost:3306/", USER, PASSWORD);
+            establishConnection(URI, USER, PASSWORD);
             Statement stmt = con.createStatement();
-            dropDB(stmt, TEST_DB);
-            Start_up("jdbc:mysql://localhost:3306/", USER, PASSWORD);
+            Start_up(URI, USER, PASSWORD);
             executeAllStatementFilesIn(stmt, "tests/setup/level0/");
             executeAllStatementFilesIn(stmt, "tests/setup/level0/level1/");
         } catch (SQLException e) {

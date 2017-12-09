@@ -1,4 +1,4 @@
-INSERT INTO Customers (uname,pwd,phone,email,name,taxid,state,is_admin) VALUES ("a","a","(805)6374632","admin@stock.com","John Admin","1000","CA",TRUE);
+INSERT INTO Customers (uname,pwd,phone,email,name,taxid,state,is_admin) VALUES ("admin","secret","(805)6374632","admin@stock.com","John Admin","1000","CA",TRUE);
 INSERT INTO Customers (uname,pwd,phone,email,name,taxid,state,is_admin) VALUES ("alfred","hi","(805)2574499","alfred@hotmail.com","Alfred Hitchcock","1022","CA",FALSE);
 INSERT INTO Customers (uname,pwd,phone,email,name,taxid,state,is_admin) VALUES ("billy","cl","(805)5629999","billy@yahoo.com","Billy Clinton","3045","CA",FALSE);
 INSERT INTO Customers (uname,pwd,phone,email,name,taxid,state,is_admin) VALUES ("cindy","la","(805)6930011","cindy@hotmail.com","Cindy Laugher","2034","CA",FALSE);
@@ -16,17 +16,17 @@ INSERT INTO Stock_Profiles (sym,dcp,price,DOB,name) VALUES ("STC",32.50,32.50,"1
 INSERT INTO Contract_Signed (sym,movie,year,value,role) VALUES ("SKB","L.A. Confidential",1997,5000000,"Actor");
 INSERT INTO Contract_Signed (sym,movie,year,value,role) VALUES ("SMD","A Perfect Murder",1998,10000000,"Actor");
 INSERT INTO Contract_Signed (sym,movie,year,value,role) VALUES ("STC","Jerry Maguire",1996,5000000,"Actor");
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("001",10000,"1022",16, 160000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("002",100000,"3045",16, 1600000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("003",50000,"2034",16, 800000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("004",45000,"4093",16, 720000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("005",200000,"1234",16, 3200000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("006",5000,"8956",16, 80000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("007",2000,"2341",16, 32000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("008",10000,"0456",16, 160000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("009",130200,"3455",16, 2083200.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("010",35000,"1123",16, 560000.0);
-INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("011",30500,"3306",16, 488000.0);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("001",10000,"1022",15, 150000.0, 10000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("002",100000,"3045",15, 1500000.0, 100000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("003",50000,"2034",15, 750000.0, 50000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("004",45000,"4093",15, 675000.0, 45000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("005",200000,"1234",15, 3000000.0, 200000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("006",5000,"8956",15, 75000.0, 5000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("007",2000,"2341",15, 30000.0, 2000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("008",10000,"0456",15, 150000.0, 10000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("009",130200,"3455",15, 1953000.0, 130200);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("010",35000,"1123",15, 525000.0, 35000);
+INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum, initial_balance) VALUES ("011",30500,"3306",15, 457500.0, 30500);
 INSERT INTO Stock_Accounts (taxid) VALUES("1022")
 INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 1, 100, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("3045")
