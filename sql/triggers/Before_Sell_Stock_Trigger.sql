@@ -1,4 +1,4 @@
-CREATE TRIGGER IF NOT EXISTS Not_Enough_Stock_To_Sell
+CREATE TRIGGER Not_Enough_Stock_To_Sell
 BEFORE INSERT ON Sell_Transactions
 FOR EACH ROW
 BEGIN

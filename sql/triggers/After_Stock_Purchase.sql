@@ -1,4 +1,4 @@
-CREATE TRIGGER IF NOT EXISTS After_Stock_Purcahse
+CREATE TRIGGER After_Stock_Purcahse
 AFTER INSERT ON Buy_Transactions
 FOR EACH ROW
 BEGIN

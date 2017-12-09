@@ -1,4 +1,4 @@
-CREATE TRIGGER IF NOT EXISTS Accrue_Interest_Into_Market_Account
+CREATE TRIGGER Accrue_Interest_Into_Market_Account
 AFTER INSERT ON Accrue_Interest_Transactions
 FOR EACH ROW
 BEGIN

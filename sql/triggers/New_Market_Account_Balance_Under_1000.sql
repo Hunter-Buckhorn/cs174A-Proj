@@ -1,4 +1,4 @@
-CREATE TRIGGER IF NOT EXISTS New_Market_Account_Balance_Under_1000
+CREATE TRIGGER New_Market_Account_Balance_Under_1000
 BEFORE INSERT ON Market_Accounts
 FOR EACH ROW
 BEGIN

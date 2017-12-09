@@ -1,4 +1,4 @@
-CREATE TRIGGER IF NOT EXISTS Not_Enough_Money_To_Buy
+CREATE TRIGGER Not_Enough_Money_To_Buy
 BEFORE INSERT ON Buy_Transactions
 FOR EACH ROW
 BEGIN

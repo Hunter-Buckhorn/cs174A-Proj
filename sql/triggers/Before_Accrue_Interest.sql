@@ -1,4 +1,4 @@
-CREATE TRIGGER IF NOT EXISTS Before_Accrue_Interest
+CREATE TRIGGER Before_Accrue_Interest
 BEFORE INSERT ON Accrue_Interest_Transactions
 FOR EACH ROW
 BEGIN

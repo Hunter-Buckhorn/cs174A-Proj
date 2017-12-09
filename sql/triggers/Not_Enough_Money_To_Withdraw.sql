@@ -1,4 +1,4 @@
-CREATE TRIGGER IF NOT EXISTS Not_Enough_Money_To_Withdraw
+CREATE TRIGGER Not_Enough_Money_To_Withdraw
 BEFORE INSERT ON Withdraw_Transactions
 FOR EACH ROW
 BEGIN
