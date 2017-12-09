@@ -12,11 +12,11 @@ public class DBInteraction {
     private static final String GET_DATA_TEMPLATE = "SELECT %s FROM %s %s;";
     private static final String INSERT_DATA_TEMPLATE = "INSERT INTO %s %s VALUES (%s)";
     private static final String UPDATE_DATA_TEMPLATE = "UPDATE %s SET %s %s";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
-    public static final String TEST_DB = "testdb";
+    private static final String USER = "thienhoang";
+    private static final String PASSWORD = "viSTALAM";
+    public static final String TEST_DB = "thienhoangDB";
     public static final String MOVIES_DB = "Moviesdb";
-    private static final String URI = "jdbc:mysql://localhost:3306/";
+    private static final String URI = "jdbc:mysql://cs174a.engr.ucsb.edu:3306/";
 
     private static Connection con = null;
 
