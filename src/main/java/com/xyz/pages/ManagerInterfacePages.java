@@ -1,26 +1,26 @@
 package com.xyz.pages;
 
 import com.xyz.DBInteraction;
+import com.xyz.TimeManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
+import static com.xyz.App.*;
+import static com.xyz.pages.LoginPage.InvalidateSession;
+import static com.xyz.pages.Page_Utilities.*;
 
 public class ManagerInterfacePages extends CustomerInterfacePage {
-    protected static final String NEW_LINE = System.getProperty("line.separator");
-    protected static void success() {
-        System.out.println("SUCCESS!");
-    }
-    private static Scanner in;
-    private static String DATE;
+    // all vars imported from CustomerInterfacePage
 
-
-    public static void Start() {
-        in = new Scanner(System.in);
+    public static void Start(String uname, String taxid, String date) {
+        Initiate(uname, taxid);
+        Show_Menu_Prompt();
         UserInputLoop: while(true) {
-            printInstructions();
-            switch (in.nextInt()) {
+            switch (getUserInt()) {
+                case 0:
+                    Show_Menu_Prompt();
+                    break;
                 case 1:
                     Add_Interest();
                     break;
@@ -40,12 +40,21 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
                     Delete_Transactions();
                     break;
                 case 7:
-                    //Log_Out();
-                    break;
+                    InvalidateSession();
+                    break UserInputLoop;
                 case 8:
-                    //Switch_Interface();
+                    System.out.println("MANAGER INTERFACE");
+                    MANAGER_INTERFACE = false;
+                    CUSTOMER_INTERFACE = true;
+                    break UserInputLoop;
+                case 9:
+                    System.out.println("Opening Time Manager...");
+                    EnterTimeManagerPrompt();
+                    System.out.println("MANAGER INTERFACE");
+                    Show_Menu_Prompt();
                     break;
-                case 9: //Exit
+                case 10: // Exit
+                    EXIT = true;
                     break UserInputLoop;
                 default:
                     break;
@@ -53,31 +62,31 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
         }
     }
 
-    private static void printInstructions() {
+
+    protected static void Show_Menu_Prompt() {
+        System.out.println("Choose 1 of the following instructions");
         System.out.println(
-                "1: Add Interest" + NEW_LINE +
-                "2: Generate Monthly Statement" + NEW_LINE +
-                "3: List Active Customers" + NEW_LINE +
-                "4: Generate DTER" + NEW_LINE +
-                "5: Generate Customer Report" + NEW_LINE +
-                "6: Delete Transactions" + NEW_LINE +
-                "7: Log Out" + NEW_LINE +
-                "8: Switch Interface" + NEW_LINE +
-                "9: Exit"
+                "0: Redisplay Menu" + NEW_LINE +
+                        "1: Add Interest" + NEW_LINE +
+                        "2: Generate Monthly Statement" + NEW_LINE +
+                        "3: List Active Customers" + NEW_LINE +
+                        "4: Generate DTER" + NEW_LINE +
+                        "5: Generate Customer Report" + NEW_LINE +
+                        "6: Delete Transactions" + NEW_LINE +
+                        "7: Log Out" + NEW_LINE +
+                        "8: Switch Interface" + NEW_LINE +
+                        "9: Enter Time Manager" + NEW_LINE +
+                        "10: Exit"
         );
     }
-
-    public static void setDate(String date) {
-        DATE = date;
-    }
-
 
     // Assumes it is only called at the end of the month, doesn't calculate by day
     private static void Add_Interest() {
         try {
-            Add_Interest_Helper(DATE);
+            Add_Interest_Helper(TimeManager.DATE);
             success();
         } catch (SQLException e) {
+            System.out.println("Error in AddInterest()");
             e.printStackTrace();
         }
     }
@@ -85,10 +94,15 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
     protected static void Add_Interest_Helper(String date) throws SQLException {
         ResultSet res = DBInteraction.getData("aid", "Market_Accounts", "");
         while(res.next()) {
-            DBInteraction.insertData("Accrue_Interest_Transactions", "(aid, date)", String.format("%s, \"%s\"", res.getString("aid"), date));
+            DBInteraction.insertData("Accrue_Interest_Transactions", "(aid, date)", String.format("\"%s\", \"%s\"", res.getString("aid"), date));
         }
     }
 
+    private static void EnterTimeManagerPrompt() {
+        System.out.println("Time Manager:");
+        TimeManager.Start();
+
+    }
 
     private static void Generate_Monthly_Statement_Prompt() {
         System.out.println("Enter Customer Username:");
@@ -111,7 +125,7 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
             float marketBal = MarketRes.getFloat("balance");
             float marketInitBal = MarketRes.getFloat("initial_balance");
             float tot_commission = MarketRes.getFloat("tot_commission");
-            System.out.println(String.format("Market Account (%s) balance: %f, initial balance: %f", marketAid, marketBal, marketInitBal));
+            System.out.println(String.format("Market Account: tid: %s, balance: %f, initial balance: %f", marketAid, marketBal, marketInitBal));
             System.out.println(String.format("Total Commission: %f", tot_commission));
 
             // Print Deposit Transactions
@@ -143,17 +157,14 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
     protected static ResultSet Generate_Monthly_Statement_Customers(String uname) throws SQLException {
         return DBInteraction.getData("name, email, taxid", "Customers", String.format("WHERE uname = \"%s\"", uname));
     }
-
     protected static ResultSet Generate_Monthly_Statement_MA(String taxid) throws SQLException {
         return DBInteraction.getData("aid, balance, initial_balance, tot_commission","Market_Accounts", String.format("WHERE taxid = %s", taxid));
     }
-
     protected static ResultSet Generate_Monthly_Statement_Simple_Trans(String m_aid, String table_name) throws SQLException {
         return DBInteraction.getData("tid, amount, date",
                 table_name,
                 String.format("WHERE aid = %s ORDER BY date", m_aid));
     }
-
     private static void Print_Simple_Transactions(ResultSet Trans, String kind_of_transaction) {
         if (!kind_of_transaction.toLowerCase().equals("deposit") &&
                 !kind_of_transaction.toLowerCase().equals("withdraw") &&
@@ -163,13 +174,13 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
             return;
         }
         try {
-            System.out.println(String.format("%10s %10s %10s", "(tid)", "(amount)", "(date)"));
+            System.out.println(String.format("%15s %15s %15s", "(tid)", "(amount)", "(date)"));
             while(Trans.next()) {
                 int tid = Trans.getInt("tid");
                 float amount = Trans.getFloat("amount");
                 String date = Trans.getString("date");
 
-                System.out.println(String.format("%10d %10f %10s", tid, amount, date));
+                System.out.println(String.format("%15d %15f %15s", tid, amount, date));
             }
 
         } catch(SQLException e) {
@@ -183,32 +194,58 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
                 String.format("WHERE m_aid = %s ORDER BY date", m_aid));
     }
 
-    protected static ResultSet Generate_Monthly_Statement_Earnings(String m_aid) throws SQLException {
-        return DBInteraction.executeQuery("/queries/MonthlyStatementEarnings.sql", m_aid, m_aid);
-    }
-
-    private static void Print_Earnings(ResultSet earningsRes) {
+    protected static float Generate_Monthly_Statement_Earnings(String m_aid) {
         try {
-            earningsRes.next();
-            System.out.println(String.format("Earnings: %f", earningsRes.getFloat(1)));
+            ResultSet r1 = Generate_Monthly_Statement_Earnings_From_Sell(m_aid);
+            float sellEarnings = 0.0f;
+            if (r1.next()) {
+                sellEarnings = r1.getFloat(1);
+            }
+            ResultSet r2 = Generate_Monthly_Statement_Earnings_From_Interest(m_aid);
+            float intEarnings = 0.0f;
+            if (r2.next()) {
+                intEarnings = r1.getFloat(1);
+            }
+            ResultSet r3 = Generate_Monthly_Statement_Earnings_Commission(m_aid);
+            float comm = 0.0f;
+            if (r3.next()) {
+                comm = r3.getFloat(1);
+            }
+            return sellEarnings + intEarnings - comm;
         } catch (SQLException e) {
-            System.out.println("Error in Printing Earnings");
             e.printStackTrace();
+            return 0f;
         }
     }
 
+    protected static ResultSet Generate_Monthly_Statement_Earnings_From_Sell(String m_aid) throws SQLException {
+        return DBInteraction.executeQuery("/queries/GetTotSellEarnings.sql", m_aid);
+    }
+
+    protected static ResultSet Generate_Monthly_Statement_Earnings_From_Interest(String m_aid) throws SQLException {
+        return DBInteraction.executeQuery("/queries/GetTotInterestEarnings.sql", m_aid);
+    }
+
+    protected static ResultSet Generate_Monthly_Statement_Earnings_Commission(String m_aid) throws SQLException {
+        return DBInteraction.getData("tot_commission", "Market_Accounts", String.format("WHERE aid = %s", m_aid));
+    }
+
+
+    private static void Print_Earnings(float earningsRes) {
+        System.out.println(String.format("Earnings: %.3f", earningsRes));
+    }
     // helpers used in Generate_Monthly_Statement_Helper
     private static void Print_Buy_Transaction(ResultSet BuyTransRS) {
         try {
             System.out.println("Buy Transactions:");
-            System.out.println(String.format("%10s %10s %10s %10s %10s", "(tid)", "(sym)", "(amount)", "(price per share)", "(date)"));
+            System.out.println(String.format("%15s %15s %15s %15s %15s", "(tid)", "(sym)", "(amount)", "(pps)", "(date)"));
             while (BuyTransRS.next()) {
                 int tid = BuyTransRS.getInt("tid");
                 String sym = BuyTransRS.getString("sym");
                 float amt = BuyTransRS.getFloat("amount");
                 float pps = BuyTransRS.getFloat("pps");
                 String date = BuyTransRS.getDate("date").toString();
-                System.out.println(String.format("%10d %10s %10f %10f %10s", tid, sym, amt, pps, date));
+                System.out.println(String.format("%15d %15s %15f %15f %15s", tid, sym, amt, pps, date));
             }
         } catch(SQLException e) {
             System.out.println(String.format("Error in Print_Buy_Transaction, error msg: ", e.getMessage()));
@@ -217,7 +254,7 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
     private static void Print_Sell_Transaction(ResultSet SellTransRS) {
         try {
             System.out.println("Sell Transactions:");
-            System.out.println(String.format("%10s %10s %10s %10s %10s %10s %10s", "(tid)", "(sym)", "(amount)", "(bought price per share)", "(sell price per share)", "(earnings)", "(date)"));
+            System.out.println(String.format("%15s %15s %15s %15s %15s %15s %15s", "(tid)", "(sym)", "(amount)", "(bought pps)", "(sell pps)", "(earnings)", "(date)"));
             while (SellTransRS.next()) {
                 int tid = SellTransRS.getInt("tid");
                 String sym = SellTransRS.getString("sym");
@@ -227,23 +264,30 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
                 float e = SellTransRS.getFloat("earnings");
                 String earnings = e > 0 ? String.format("+%f", e) : String.format("%f", e); // if earnings is positive, prepend "+"
                 String date = SellTransRS.getDate("date").toString();
-                System.out.println(String.format("%10d %10s %10f %10f %10f %10s %10s", tid, sym, amt, b_pps, s_pps, earnings, date));
+                System.out.println(String.format("%15d %15s %15f %15f %15f %15s %15s", tid, sym, amt, b_pps, s_pps, earnings, date));
             }
         } catch(SQLException e) {
             System.out.println(String.format("Error in Print_Buy_Transaction, error msg: ", e.getMessage()));
         }
     }
 
+
     private static void Generate_DTER() {
         // each customer who earns more than 10k each month
         // earnings are stored in sell transactions
         // interest is calculated on the market account total
+        System.out.println("Generating DTER:");
         try {
+            boolean isEmpty = true;
             ResultSet res = Generate_DTER_Helper();
             while (res.next()) {
+                isEmpty = false;
                 String uname = res.getString("uname");
                 String state = res.getString("state");
                 System.out.println(String.format("%s, %s", uname, state));
+            }
+            if (isEmpty) {
+                System.out.println("No customers have made more than $10,000 this month");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -254,67 +298,34 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
         return DBInteraction.executeQuery("queries/DTER.sql");
     }
 
-    //            ResultSet MarketAccounts = DBInteraction.getData("aid, taxid", "Market_Accounts", "");
-//        try {
-//
-//            System.out.println(String.format("%30s %20s %5s", "(name)", "(username)", "(state)"));
-//
-//            while (MarketAccounts.next()) {
-//                int marketAid = MarketAccounts.getInt("aid");
-//                int CustomerTaxid = MarketAccounts.getInt("taxid");
-//                // get all sell trans and sum earnings
-//                // todo: is this the right date var ?
-//                ResultSet SellTrans = DBInteraction.getData("earnings", "Sell_Transactions", String.format("WHERE m_aid = %d AND month(date) = \"%s\"", marketAid, DATE.substring(5,7)));
-//                double totalEarnings = 0;
-//                while(SellTrans.next()) {
-//                    totalEarnings += SellTrans.getFloat("earnings");
-//                }
-//
-//                // if the interest has been calculated already?
-//                ResultSet AccrIntr = DBInteraction.getData("amount", "Accrue_Interest_Transactions", String.format("WHERE aid = %d AND month(date) = \"%s\"", marketAid, DATE.substring(5,7)));
-//
-//                if (AccrIntr.next()) {
-//                    totalEarnings += AccrIntr.getFloat("amount");
-//                }
-//
-//                if (totalEarnings > 10000) {
-//                    // get the customer info with taxid
-//                    ResultSet Customer = DBInteraction.getData("uname, name, state", "Customers", String.format("WHERE taxid = \"%d\"", CustomerTaxid));
-//                    String Cuname = Customer.getString("uname");
-//                    String Cname = Customer.getString("name");
-//                    String Cstate = Customer.getString("state");
-//
-//                    System.out.println(String.format("%30s %20s %5s", Cname, Cuname, Cstate));
-//                }
-//
-//
-//            }
-//        } catch (SQLException e) {
-//            System.out.print(String.format("Error in Generate_DTER, error msg: ", e.getMessage()));
-//        }
-//    }
-
 
 
     private static void List_Active_Customers() {
         try {
-            ResultSet res = List_Active_Customers_Helper(DATE);
+            //System.out.println("In active customers");
+            ResultSet res = List_Active_Customers_Helper(TimeManager.DATE);
+            boolean isEmpty = true;
             while (res.next()) {
-                System.out.println(String.format("%s: %s", res.getString("uname"), res.getString("tot")));
+                isEmpty = false;
+                System.out.println(String.format("%s: %s", res.getString("uname"), res.getString("totSharesDealt")));
+            }
+            if(isEmpty == true) {
+                System.out.println("No active users");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(String.format("Error in List_Active_Customers: %s", e.getMessage()));
         }
     }
 
     protected static ResultSet List_Active_Customers_Helper(String date) throws SQLException {
-        return DBInteraction.executeQuery("queries/ListActiveUsers.sql", date, date);
+        return DBInteraction.executeQuery("queries/ListActiveUsers.sql");
     }
 
-    private static void Delete_Transactions() {
+    public static void Delete_Transactions() {
         try {
+            System.out.println("Deleting Transactions");
             Delete_Transactions_Helper();
-            success();
+            System.out.println("Transactions Deleted");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -333,6 +344,7 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
         DBInteraction.executeAllStatementFilesIn(null, "triggers/");
     }
 
+    // todo: add error checking for valid customer uname
     private static void Generate_Customer_Report_Prompt() {
         System.out.println("Customer username:");
         String uname = in.next();

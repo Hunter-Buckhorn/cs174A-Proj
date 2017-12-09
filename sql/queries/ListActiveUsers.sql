@@ -1,22 +1,16 @@
-SELECT C.uname, TotSharesDeal.tot
+SELECT C.uname, COALESCE(TotSharesBought.tot,0) + COALESCE(TotSharesSold.tot,0) AS totSharesDealt
 FROM Customers C
 INNER JOIN Stock_Accounts SA ON C.taxid = SA.taxid
-INNER JOIN
-(
-    SELECT TotSharesBought.s_aid, (TotSharesBought.tot + TotSharesSold.tot) AS tot
-    FROM
+LEFT JOIN
     (
-        SELECT s_aid, SUM(amount) AS tot
+    SELECT s_aid, SUM(amount) AS tot
         FROM Buy_Transactions
-        WHERE MONTH(date) = MONTH("%s")
         GROUP BY s_aid
-    ) TotSharesBought
-    INNER JOIN
+    ) TotSharesBought ON SA.aid = TotSharesBought.s_aid
+LEFT JOIN
     (
         SELECT s_aid, SUM(amount) AS tot
         FROM Sell_Transactions
-        WHERE MONTH(date) = MONTH("%s")
         GROUP BY s_aid
-    ) TotSharesSold ON TotSharesBought.s_aid = TotSharesSold.s_aid
-) TotSharesDeal ON SA.aid = TotSharesDeal.s_aid
-WHERE TotSharesDeal.tot >= 1000;
+    ) TotSharesSold ON SA.aid = TotSharesSold.s_aid
+WHERE COALESCE(TotSharesBought.tot,0) + COALESCE(TotSharesSold.tot,0) >= 1000;

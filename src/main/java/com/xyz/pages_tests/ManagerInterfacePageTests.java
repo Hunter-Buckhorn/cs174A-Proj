@@ -9,11 +9,11 @@ import java.sql.SQLException;
 
 import static com.xyz.Test_Utilities.*;
 
-public class ManagerInterfacePageTests extends ManagerInterfacePages {
+public class  ManagerInterfacePageTests extends ManagerInterfacePages {
 
     public static void main(String[] args) {
         Add_Interest_Test();
-//        Generate_Monthly_Statement_SuccessTest();
+        //Generate_Monthly_Statement_SuccessTest();
         List_Active_Customers_Success_Test();
         List_Active_Customers_Fail_Test();
         Generate_DTER_Test();
@@ -22,10 +22,8 @@ public class ManagerInterfacePageTests extends ManagerInterfacePages {
         Delete_Transactions_Test();
     }
 
-
     private static void setUp() {
         DBInteraction.setupTestDB();
-        setDate(DATE_STUB);
         Initiate(UNAME_STUB, TAXID_STUB);
     }
 
@@ -44,29 +42,6 @@ public class ManagerInterfacePageTests extends ManagerInterfacePages {
             fail(test_name, e.getMessage());
             e.printStackTrace();
         }
-//        Map<Integer, Double> MarketMap = new HashMap<Integer, Double>();
-//        setUp();
-//        try {
-//            ResultSet PreInterestMarketAccounts = DBInteraction.getData("aid, balance", "Market_Accounts", "");
-//            MarketMap.put(PreInterestMarketAccounts.getInt("aid"), PreInterestMarketAccounts.getDouble("balance"));
-//
-//        } catch (SQLException e) {
-//            System.out.println(String.format("Error in AddInterest_SuccessTest: PreMarketAccounts Query, error msg: %s", e.getMessage()));
-//        }
-//
-//        try {
-//            Add_Interest_Helper(DATE_STUB);
-//            ResultSet MarketAccounts = DBInteraction.getData("aid, balance", "Market_Accounts", "");
-//
-//            boolean cumulativePass = true;
-//            while (MarketAccounts.next()) {
-//                cumulativePass &= (MarketAccounts.getDouble("balance") == MarketMap.get(MarketAccounts.getInt("aid")));
-//            }
-//            if (cumulativePass) success();
-//
-//        } catch(SQLException e) {
-//           fail(test_name, String.format("Error in AddInterest_SuccessTest: MarketAccounts Query, error msg: %s", e.getMessage()));
-//        }
 
     }
 
@@ -74,6 +49,9 @@ public class ManagerInterfacePageTests extends ManagerInterfacePages {
     private static void Generate_Monthly_Statement_SuccessTest() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
+
+        // insert data into the database
+
 
 
 
@@ -85,13 +63,13 @@ public class ManagerInterfacePageTests extends ManagerInterfacePages {
         setUp();
         try {
             DBInteraction.insertData("Buy_Transactions", "(m_aid, s_aid, sym, amount, pps, date)",
-                    String.format("%s, %s, %s, %f, %f, \"%s\"", M_AID_STUB, S_AID_STUB, SYM_STUB, 200f, 0.001f, DATE_STUB)
+                    String.format("%s, %s, \"%s\", %f, %f, \"%s\"", M_AID_STUB, S_AID_STUB, SYM_STUB, 200f, 0.001f, DATE_STUB)
             );
             DBInteraction.insertData("Buy_Transactions", "(m_aid, s_aid, sym, amount, pps, date)",
-                    String.format("%s, %s, %s, %f, %f, \"%s\"", M_AID_STUB, S_AID_STUB, SYM_STUB, 300f, 0.001f, DATE_STUB)
+                    String.format("%s, %s, \"%s\", %f, %f, \"%s\"", M_AID_STUB, S_AID_STUB, SYM_STUB, 300f, 0.001f, DATE_STUB)
             );
             DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, date, b_pps)",
-                    String.format("%s, %s, %s, %f, %f, \"%s\",%f", M_AID_STUB, S_AID_STUB, SYM_STUB, 500f, 0.001f, DATE_STUB, 0.001f));
+                    String.format("%s, %s, \"%s\", %f, %f, \"%s\",%f", M_AID_STUB, S_AID_STUB, SYM_STUB, 500f, 0.001f, DATE_STUB, 0.001f));
         } catch (SQLException e) {
             fail(test_name, "SET UP Problem");
             e.printStackTrace();
@@ -175,7 +153,7 @@ public class ManagerInterfacePageTests extends ManagerInterfacePages {
             InsertStubIntoIn_Stock_Acc(1000000f);
             DBInteraction.insertData("Sell_Transactions",
                     "(m_aid, s_aid, sym, b_pps, amount, s_pps)",
-                    String.format("%s, %s, %s, %f, %f, %f",
+                    String.format("%s, %s, \"%s\", %f, %f, %f",
                             M_AID_STUB, S_AID_STUB,
                             SYM_STUB, STOCK_BUYING_PRICE_STUB,
                             amt, STOCK_PRICE_STUB));

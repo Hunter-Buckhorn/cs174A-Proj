@@ -28,7 +28,7 @@ INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance
 INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("010",35000,"1123",16, 560000.0);
 INSERT INTO Market_Accounts (aid,balance,taxid,day_of_the_month, running_balance_sum) VALUES ("011",30500,"3306",16, 488000.0);
 INSERT INTO Stock_Accounts (taxid) VALUES("1022")
-INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 1, 100, 40.00);
+INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SKB", 1, 10000, 40.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("3045")
 INSERT INTO In_Stock_Acc (sym,aid,balance,pps) VALUES ("SMD", 2, 500, 71.00);
 INSERT INTO Stock_Accounts (taxid) VALUES("3045")

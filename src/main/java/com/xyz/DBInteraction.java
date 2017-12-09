@@ -7,7 +7,7 @@ public class DBInteraction {
     private static final String CREATE_DB_STATEMENT = "CREATE DATABASE IF NOT EXISTS %s;";
     private static final String DROP_DB_STATEMENT = "DROP DATABASE %s;";
     private static final String USE_DB_STATEMENT = "USE %s;";
-    private static final String DROP_TABLE_STATEMENT = "DROP TABLE %s;";
+    private static final String DROP_TABLE_STATEMENT = "DROP TABLE IF EXISTS %s;";
     private static final String SQL_FOLDER_REL_PATH = "./sql/";
     private static final String GET_DATA_TEMPLATE = "SELECT %s FROM %s %s;";
     private static final String INSERT_DATA_TEMPLATE = "INSERT INTO %s %s VALUES (%s)";
@@ -18,6 +18,9 @@ public class DBInteraction {
     public static final String MOVIES_DB = "Moviesdb";
 
     private static Connection con = null;
+
+
+
 
     public static void Start_up(String url, String user, String pwd) {
         try {

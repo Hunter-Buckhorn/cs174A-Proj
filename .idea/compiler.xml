@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="thienhoang_hunterbuckhorn_project2" target="1.5" />
+      <module name="thienhoang_hunterbuckhorn_project2" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

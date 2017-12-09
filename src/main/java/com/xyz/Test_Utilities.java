@@ -9,7 +9,7 @@ public class Test_Utilities {
     public static final float TOLERANCE = 0.001f;
     public static final String M_AID_STUB = "1";
     public static final String S_AID_STUB = "1";
-    public static final String SYM_STUB = "123";
+    public static final String SYM_STUB = "abc";
     public static final String UNAME_STUB = "test";
     public static final String TAXID_STUB = "1234";
     public static final String PWD_STUB = "test";
@@ -35,8 +35,8 @@ public class Test_Utilities {
 
     public static void InsertStubIntoIn_Stock_Acc(Float stock_amount) throws SQLException {
         if (stock_amount == null)
-            DBInteraction.insertData("In_Stock_Acc", "(sym, aid, balance, pps)", String.format("%s,%s,%f,%f", SYM_STUB, S_AID_STUB, BALANCE_IN_STOCK_ACC_STUB, STOCK_BUYING_PRICE_STUB));
+            DBInteraction.insertData("In_Stock_Acc", "(sym, aid, balance, pps)", String.format("\"%s\",%s,%f,%f", SYM_STUB, S_AID_STUB, BALANCE_IN_STOCK_ACC_STUB, STOCK_BUYING_PRICE_STUB));
         else
-            DBInteraction.insertData("In_Stock_Acc", "(sym, aid, balance, pps)", String.format("%s,%s,%f,%f", SYM_STUB, S_AID_STUB, stock_amount, STOCK_BUYING_PRICE_STUB));
+            DBInteraction.insertData("In_Stock_Acc", "(sym, aid, balance, pps)", String.format("\"%s\",%s,%f,%f", SYM_STUB, S_AID_STUB, stock_amount, STOCK_BUYING_PRICE_STUB));
     }
 }

@@ -1,12 +1,14 @@
 package com.xyz.pages_tests;
 
 import com.xyz.DBInteraction;
+import com.xyz.TimeManager;
 import com.xyz.pages.CustomerInterfacePage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static com.xyz.Test_Utilities.*;
+import static com.xyz.pages.Page_Utilities.getStockPrice;
 
 public class CustomerInterfacePageTests extends CustomerInterfacePage{
     public static void main(String[] args) {
@@ -30,8 +32,8 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
 
     private static void setUp() {
         DBInteraction.setupTestDB();
-        setDate("2017-11-30");
         Initiate(UNAME_STUB, TAXID_STUB);
+        TimeManager.Initialize(DATE_STUB);
     }
 
     private static void DepositSuccessTest() {
@@ -73,13 +75,13 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
     private static void SellSuccessTest_ReduceStock() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
-        float amt = 1f;
+        float amt = 1;
         try {
             InsertStubIntoIn_Stock_Acc(null);
             Sell_Helper(amt, SYM_STUB, STOCK_BUYING_PRICE_STUB);
             ResultSet res = DBInteraction.getData("balance",
                     "In_Stock_Acc",
-                    String.format("WHERE aid = %s AND sym = %s", S_AID, SYM_STUB));
+                    String.format("WHERE aid = %s AND sym = \"%s\"", S_AID, SYM_STUB));
             res.next();
             float expected = BALANCE_IN_STOCK_ACC_STUB - amt;
             if (isEqual(expected, res.getFloat("balance"))) pass(test_name);
@@ -93,7 +95,7 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
     private static void SellSuccessTest_ChangeMoney() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
-        float amt = 1f;
+        float amt = 1;
         try {
             InsertStubIntoIn_Stock_Acc(null);
             Sell_Helper(amt, SYM_STUB, STOCK_BUYING_PRICE_STUB);
@@ -113,13 +115,13 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
     private static void BuySuccessTest_IncreaseStock() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
-        float amt = 1f;
+        float amt = 1;
         try {
             InsertStubIntoIn_Stock_Acc(null);
             Buy_Helper(amt, SYM_STUB, STOCK_BUYING_PRICE_STUB);
             ResultSet res = DBInteraction.getData("balance",
                     "In_Stock_Acc",
-                    String.format("WHERE aid = %s AND sym = %s AND pps = %f", S_AID, SYM_STUB, STOCK_BUYING_PRICE_STUB));
+                    String.format("WHERE aid = %s AND sym = \"%s\" AND pps = %f", S_AID, SYM_STUB, STOCK_BUYING_PRICE_STUB));
             res.next();
             float expected = BALANCE_IN_STOCK_ACC_STUB + amt;
             float actual = res.getFloat("balance");
@@ -134,7 +136,7 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
     private static void BuySuccessTest_ChangeMoney() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
-        float amt = 1f;
+        float amt = 1;
         try {
             InsertStubIntoIn_Stock_Acc(null);
             Buy_Helper(amt, SYM_STUB, STOCK_PRICE_STUB);
@@ -169,15 +171,12 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
     private static void getStockPriceTest() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
-        try {
-            float actual = getStockPrice(SYM_STUB);
-            float expected = STOCK_PRICE_STUB;
-            if(isEqual(expected, actual)) pass(test_name);
-            else fail(test_name, "");
-        } catch (SQLException e) {
-            fail(test_name, e.getMessage());
-            e.printStackTrace();
-        }
+
+        float actual = getStockPrice(SYM_STUB);
+        float expected = STOCK_PRICE_STUB;
+        if(isEqual(expected, actual)) pass(test_name);
+        else fail(test_name, "");
+
     }
 
     private static void getStockTransactionsForBuyTest() {
