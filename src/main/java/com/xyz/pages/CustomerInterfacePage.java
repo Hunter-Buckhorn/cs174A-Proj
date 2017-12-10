@@ -560,7 +560,7 @@ public class CustomerInterfacePage {
 
     protected static ResultSet ListTopMoviesHelper(String year_begin, String year_end) throws SQLException {
         DBInteraction.useDB(MOVIES_DB, null);
-        return DBInteraction.getData("title", "movies", String.format("WHERE rating >= 5.0 AND production_year BETWEEN %s AND %s", year_begin, year_end));
+        return DBInteraction.getData("title", "Movies", String.format("WHERE rating >= 5.0 AND production_year BETWEEN %s AND %s", year_begin, year_end));
     }
 
     protected static void GetReviewsPrompt() {
@@ -586,9 +586,9 @@ public class CustomerInterfacePage {
 
     protected static ResultSet GetReviewsHelper(String title) throws SQLException {
         DBInteraction.useDB(MOVIES_DB, null);
-        ResultSet res = DBInteraction.getData("id", "movies", String.format("WHERE title = \"%s\"", title));
+        ResultSet res = DBInteraction.getData("id", "Movies", String.format("WHERE title = \"%s\"", title));
         res.next();
         int movieid = res.getInt("id");
-        return DBInteraction.getData("review","reviews", String.format("WHERE movie_id = %d", movieid));
+        return DBInteraction.getData("review","Reviews", String.format("WHERE movie_id = %d", movieid));
     }
 }
