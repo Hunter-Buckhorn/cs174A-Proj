@@ -14,14 +14,19 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
     public static void main(String[] args) {
         DepositSuccessTest();
         WithdrawSuccessTest();
+        WithdrawFailTest();
         SellSuccessTest_ReduceStock();
         SellSuccessTest_ChangeMoney();
         BuySuccessTest_IncreaseStock();
         BuySuccessTest_ChangeMoney();
+        BuyOneSuccessTest_ChargeCommission();
+        BuyTwoSuccessTest_ChargeCommission();
         getBalanceTest();
         getStockPriceTest();
-        getStockTransactionsForBuyTest();
-        getStockTransactionsForSellTest();
+        getStockTransactionsForOneBuyTest();
+        getStockTransactionsForTwoBuyTest();
+        getStockTransactionsForOneSellTest();
+        getStockTransactionsForTwoSellTest();
         ChargeCommissionTest_ReduceBalance();
         ChargeCommissionTest_IncreaseTotCommission();
         ListMovieInfoTest();
@@ -69,6 +74,18 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         } catch (SQLException e) {
             fail(test_name, e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private static void WithdrawFailTest() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        float amt = 1000000f;
+        try {
+            Withdraw_Helper(amt);
+            fail(test_name, "");
+        } catch (SQLException e) {
+            pass(test_name);
         }
     }
 
@@ -153,6 +170,47 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
         }
     }
 
+    private static void BuyOneSuccessTest_ChargeCommission() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        float amt = 1;
+        try {
+            InsertStubIntoIn_Stock_Acc(null);
+            Buy_Helper(amt, SYM_STUB, STOCK_PRICE_STUB);
+            ResultSet res = DBInteraction.getData("tot_commission",
+                    "Market_Accounts",
+                    String.format("WHERE aid = %s", M_AID));
+            res.next();
+            float expected = 20f;
+            if (isEqual(expected, res.getFloat("tot_commission"))) pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void BuyTwoSuccessTest_ChargeCommission() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        float amt = 1;
+        try {
+            InsertStubIntoIn_Stock_Acc(null);
+            Buy_Helper(amt, SYM_STUB, STOCK_PRICE_STUB);
+            Buy_Helper(amt, SYM_STUB, STOCK_PRICE_STUB);
+            ResultSet res = DBInteraction.getData("tot_commission",
+                    "Market_Accounts",
+                    String.format("WHERE aid = %s", M_AID));
+            res.next();
+            float expected = 40f;
+            if (isEqual(expected, res.getFloat("tot_commission"))) pass(test_name);
+            else fail(test_name, "");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private static void getBalanceTest() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
@@ -179,7 +237,7 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
 
     }
 
-    private static void getStockTransactionsForBuyTest() {
+    private static void getStockTransactionsForOneBuyTest() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
         float amt = 1;
@@ -187,15 +245,40 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
             Buy_Helper(1, SYM_STUB, STOCK_PRICE_STUB);
             ResultSet res = getStockTransactions(true);
             res.next();
-            res.getInt("tid");
-            pass(test_name);
+            int actual = res.getInt("tid");
+            int expected = 1;
+            if (actual == expected) pass(test_name);
+            else fail(test_name, "");
         } catch (SQLException e) {
             fail(test_name, e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private static void getStockTransactionsForSellTest() {
+    private static void getStockTransactionsForTwoBuyTest() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        float amt = 1;
+        try {
+            Buy_Helper(1, SYM_STUB, STOCK_PRICE_STUB);
+            Buy_Helper(1, SYM_STUB, STOCK_PRICE_STUB);
+            ResultSet res = getStockTransactions(true);
+            res.next();
+            int act1 = res.getInt("tid");
+            int exp1 = 1;
+            res.next();
+            int act2 = res.getInt("tid");
+            int exp2 = 2;
+            if (act1 == exp1 && act2 == exp2) pass(test_name);
+            if (act1 != exp1 && act2 == exp2) fail(test_name, "First Transcation is wrong!");
+            if (act1 == exp1 && act2 != exp2) fail(test_name, "Second Transcation is wrong!");
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void getStockTransactionsForOneSellTest() {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         setUp();
         float amt = 1;
@@ -206,6 +289,30 @@ public class CustomerInterfacePageTests extends CustomerInterfacePage{
             res.next();
             res.getInt("tid");
             pass(test_name);
+        } catch (SQLException e) {
+            fail(test_name, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void getStockTransactionsForTwoSellTest() {
+        String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
+        setUp();
+        float amt = 1;
+        try {
+            InsertStubIntoIn_Stock_Acc(null);
+            Sell_Helper(1, SYM_STUB, STOCK_BUYING_PRICE_STUB);
+            Sell_Helper(1, SYM_STUB, STOCK_BUYING_PRICE_STUB);
+            ResultSet res = getStockTransactions(false);
+            res.next();
+            int act1 = res.getInt("tid");
+            int exp1 = 1;
+            res.next();
+            int act2 = res.getInt("tid");
+            int exp2 = 2;
+            if (act1 == exp1 && act2 == exp2) pass(test_name);
+            if (act1 != exp1 && act2 == exp2) fail(test_name, "First Transcation is wrong!");
+            if (act1 == exp1 && act2 != exp2) fail(test_name, "Second Transcation is wrong!");
         } catch (SQLException e) {
             fail(test_name, e.getMessage());
             e.printStackTrace();
