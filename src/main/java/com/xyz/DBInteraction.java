@@ -5,7 +5,7 @@ import java.sql.*;
 
 public class DBInteraction {
     private static final String CREATE_DB_STATEMENT = "CREATE DATABASE IF NOT EXISTS %s;";
-    private static final String DROP_DB_STATEMENT = "DROP DATABASE %s;";
+    //    private static final String DROP_DB_STATEMENT = "DROP DATABASE %s;";
     private static final String USE_DB_STATEMENT = "USE %s;";
     private static final String DROP_TABLE_STATEMENT = "DROP TABLE IF EXISTS %s;";
     private static final String SQL_FOLDER_REL_PATH = "./sql/";
@@ -118,12 +118,17 @@ public class DBInteraction {
         executeAllStatementsInFile(subFilePath);
     }
 
-    private static void dropDB(Statement stmt, String dbname) {
-        try {
-            stmt.execute(String.format(DROP_DB_STATEMENT, dbname));
-        }
-        catch (SQLException e) {}
-    }
+
+    /*
+        DEPRCATED FOR BEING TOO DANGEROUS
+     */
+
+//    private static void dropDB(Statement stmt, String dbname) {
+//        try {
+//            stmt.execute(String.format(DROP_DB_STATEMENT, dbname));
+//        }
+//        catch (SQLException e) {}
+//    }
 
     private static void executeAllStatementsInFile(String subFilePath) throws SQLException, IOException {
         File f = new File(SQL_FOLDER_REL_PATH + subFilePath);
