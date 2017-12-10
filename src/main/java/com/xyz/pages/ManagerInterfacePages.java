@@ -204,7 +204,7 @@ public class ManagerInterfacePages extends CustomerInterfacePage {
             ResultSet r2 = Generate_Monthly_Statement_Earnings_From_Interest(m_aid);
             float intEarnings = 0.0f;
             if (r2.next()) {
-                intEarnings = r1.getFloat(1);
+                intEarnings = r2.getFloat(1);
             }
             ResultSet r3 = Generate_Monthly_Statement_Earnings_Commission(m_aid);
             float comm = 0.0f;

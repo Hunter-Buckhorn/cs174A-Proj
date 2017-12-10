@@ -30,7 +30,7 @@ public class TriggerTests {
 
         float amt = 1.325f;
         try {
-            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,%s,%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
+            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,\"%s\",%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
         } catch (SQLException e) {
             if(e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
             else {
@@ -46,7 +46,7 @@ public class TriggerTests {
         float amt = BALANCE_IN_STOCK_ACC_STUB + 1;
         try {
             InsertStubIntoIn_Stock_Acc(null);
-            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,%s,%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
+            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,\"%s\",%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
         } catch (SQLException e) {
             if(e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
             else {
@@ -62,8 +62,8 @@ public class TriggerTests {
         float amt = 1.125f;
         try {
             InsertStubIntoIn_Stock_Acc(null);
-            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,%s,%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
-            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = %s AND pps = %f", S_AID_STUB, SYM_STUB, STOCK_BUYING_PRICE_STUB));
+            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,\"%s\",%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
+            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = \"%s\" AND pps = %f", S_AID_STUB, SYM_STUB, STOCK_BUYING_PRICE_STUB));
             float expected = BALANCE_IN_STOCK_ACC_STUB - amt;
             res.next();
             float actual = res.getFloat("balance");
@@ -81,7 +81,7 @@ public class TriggerTests {
         float amt = 1.125f;
         try {
             InsertStubIntoIn_Stock_Acc(null);
-            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,%s,%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
+            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,\"%s\",%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
             ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE aid = %s", M_AID_STUB));
             float expected = BALANCE_MARKET_ACCOUNT_STUB + STOCK_PRICE_STUB * amt;
             res.next();
@@ -178,7 +178,7 @@ public class TriggerTests {
         String test_name = new Object(){}.getClass().getEnclosingMethod().getName();
         DBInteraction.setupTestDB();
         try {
-            DBInteraction.insertData("Buy_Transactions","(m_aid, s_aid, sym, amount, pps)", String.format("%s,%s,%s,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, 10f, BALANCE_MARKET_ACCOUNT_STUB + 1));
+            DBInteraction.insertData("Buy_Transactions","(m_aid, s_aid, sym, amount, pps)", String.format("%s,%s,\"%s\",%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, 10f, BALANCE_MARKET_ACCOUNT_STUB + 1));
         } catch (SQLException e) {
             if(e.getSQLState().equals(SQL_CUSTOM_FAIL_STATE)) pass(test_name);
             else {
@@ -193,8 +193,8 @@ public class TriggerTests {
         DBInteraction.setupTestDB();
         float amt = 1.243f;
         try {
-            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", String.format("%s,%s,%s,%f,%f",S_AID_STUB, M_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB));
-            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = %s AND pps = %f", S_AID_STUB, SYM_STUB, STOCK_PRICE_STUB));
+            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", String.format("%s,%s,\"%s\",%f,%f",S_AID_STUB, M_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB));
+            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = \"%s\" AND pps = %f", S_AID_STUB, SYM_STUB, STOCK_PRICE_STUB));
             if (res.next() == true) pass(test_name);
             else fail(test_name, "");
         } catch (SQLException e) {
@@ -210,8 +210,8 @@ public class TriggerTests {
         float amt = 1.243f;
         try {
             InsertStubIntoIn_Stock_Acc(null);
-            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", String.format("%s,%s,%s,%f,%f",S_AID_STUB, M_AID_STUB, SYM_STUB, amt, STOCK_BUYING_PRICE_STUB));
-            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = %s AND pps = %f", S_AID_STUB, SYM_STUB, STOCK_BUYING_PRICE_STUB));
+            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", String.format("%s,%s,\"%s\",%f,%f",S_AID_STUB, M_AID_STUB, SYM_STUB, amt, STOCK_BUYING_PRICE_STUB));
+            ResultSet res = DBInteraction.getData("balance", "In_Stock_Acc", String.format("WHERE aid = %s AND sym = \"%s\" AND pps = %f", S_AID_STUB, SYM_STUB, STOCK_BUYING_PRICE_STUB));
             res.next();
             actual = res.getFloat("balance");
             float expected = BALANCE_IN_STOCK_ACC_STUB + amt;
@@ -229,7 +229,7 @@ public class TriggerTests {
         float actual = 0.0f;
         float amt = 1.243f;
         try {
-            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", String.format("%s,%s,%s,%f,%f",S_AID_STUB, M_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB));
+            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", String.format("%s,%s,\"%s\",%f,%f",S_AID_STUB, M_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB));
             ResultSet res = DBInteraction.getData("balance", "Market_Accounts", String.format("WHERE aid = %s", M_AID_STUB));
             res.next();
             actual = res.getFloat("balance");
@@ -248,7 +248,7 @@ public class TriggerTests {
         float actual = 0.0f;
         float amt = 1.243f;
         try {
-            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", String.format("%s,%s,%s,%f,%f",S_AID_STUB, M_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB));
+            DBInteraction.insertData("Buy_Transactions", "(s_aid, m_aid, sym, amount, pps)", String.format("%s,%s,\"%s\",%f,%f",S_AID_STUB, M_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB));
             ResultSet res = DBInteraction.getData("tot_commission", "Market_Accounts", String.format("WHERE aid = %s", M_AID_STUB));
             res.next();
             actual = res.getFloat("tot_commission");
@@ -285,7 +285,7 @@ public class TriggerTests {
         float amt = 1.125f;
         try {
             InsertStubIntoIn_Stock_Acc(null);
-            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,%s,%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
+            DBInteraction.insertData("Sell_Transactions", "(m_aid, s_aid, sym, amount, s_pps, b_pps)", String.format("%s,%s,\"%s\",%f,%f,%f", M_AID_STUB, S_AID_STUB, SYM_STUB, amt, STOCK_PRICE_STUB, STOCK_BUYING_PRICE_STUB));
             ResultSet res = DBInteraction.getData("earnings", "Sell_Transactions", "WHERE tid = 1");
             res.next();
             float actual = res.getFloat("earnings");

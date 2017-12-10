@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.xyz.pages.Page_Utilities.*;
-import static java.lang.System.exit;
 
 public class TimeManager {
     public static String DATE;
@@ -47,8 +46,7 @@ public class TimeManager {
                     System.out.println(String.format("Current Date is: %s", DATE));
                     break;
                 case 4:
-                    System.out.println("What date do you want to set it at? [format yyyy-mm-dd]");
-                    setDate(in.next());
+                    setDate_Prompt();
                     break;
                 case 5:
                     System.out.println("Change the stock values");
@@ -78,15 +76,16 @@ public class TimeManager {
         );
     }
 
-    private static void openDay() {
+    protected static void openDay() {
         isClosed = false;
     }
 
-    private static void closeDay() {
+    protected static void closeDay() {
         // need to record the daily closing price
         try {
             isClosed = true;
             UpdateStockClosingPrice();
+            UpdateDayInMarketAcct(1);
             UpdateRunningBalanceSum(1);
         } catch (SQLException e) {
             System.out.println(String.format("Error in closeDay, error msg: %s", e.getMessage()));
@@ -107,23 +106,29 @@ public class TimeManager {
                 String.format(String.format("running_balance_sum = running_balance_sum + balance * CAST(%d AS DECIMAL(18,3)) ", multiplier)), "");
     }
 
-    public static void setDate(String new_date) {
+    public static void setDate_Prompt() {
         // Use To Set Date in The Future
 
-        // Set up avoid mis-use of set date and initialize
-        if (DATE == null) {
-            System.err.println("USE Initialize when first start up!");
-            exit(1);
+        // Get User Input
+        String newDate = null;
+        while(true) {
+            System.out.println("What date do you want to set it at? [format yyyy-mm-dd]");
+            newDate = in.next();
+            if(newDate.split("-").length == 3) break;
         }
         try {
-            // Make sure the day is closed before set to new day
-            if(isClosed == false) closeDay();
-            setDateHelper(new_date);
-            openDay();
+            setDate(newDate);
         } catch (SQLException e) {
-            System.out.println(String.format("Error in setDate(%s)", new_date));
+            System.out.println(String.format("Error in setDate(%s)", newDate));
             e.printStackTrace();
         }
+    }
+
+    protected static void setDate(String new_date) throws SQLException {
+        // Make sure the day is closed before set to new day
+        if(isClosed == false) closeDay();
+        setDateHelper(new_date);
+        openDay();
     }
 
     protected static void setDateHelper(String new_date) throws SQLException {
@@ -139,7 +144,7 @@ public class TimeManager {
         }
     }
 
-    public static void ChangeStockValPrompt() {
+    private static void ChangeStockValPrompt() {
         try{
             List<String> symArr = new ArrayList<>();
             printAllStocksAvailable(symArr,null);
