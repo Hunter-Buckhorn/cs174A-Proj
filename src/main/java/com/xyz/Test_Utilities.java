@@ -39,4 +39,16 @@ public class Test_Utilities {
         else
             DBInteraction.insertData("In_Stock_Acc", "(sym, aid, balance, pps)", String.format("\"%s\",%s,%f,%f", SYM_STUB, S_AID_STUB, stock_amount, STOCK_BUYING_PRICE_STUB));
     }
+
+    public static int getYear(String date) {
+        return Integer.parseInt(date.split("-")[0]);
+    }
+
+    public static int getMonth(String date) {
+        return Integer.parseInt(date.split("-")[1]);
+    }
+
+    public static int getDay(String date) {
+        return Integer.parseInt(date.split("-")[2]);
+    }
 }
