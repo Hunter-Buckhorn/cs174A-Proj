@@ -23,4 +23,3 @@ DROP PROCEDURE IF EXISTS Add_Money_To_Market_Account;
 DROP PROCEDURE IF EXISTS Add_Stock_To_Stock_Account;
 DROP PROCEDURE IF EXISTS Take_Money_From_Market_Account;
 DROP PROCEDURE IF EXISTS Take_Stock_From_Stock_Account;
-

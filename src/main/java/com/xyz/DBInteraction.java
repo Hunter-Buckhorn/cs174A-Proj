@@ -136,7 +136,7 @@ public class DBInteraction {
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line;
         while((line = reader.readLine()) != null) {
-            stmt.execute(line);
+            if (!line.trim().equals("")) stmt.execute(line);
         }
         reader.close();
     }
