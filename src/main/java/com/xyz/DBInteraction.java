@@ -15,7 +15,7 @@ public class DBInteraction {
     private static final String USER = "thienhoang";
     private static final String PASSWORD = "viSTALAM";
     public static final String TEST_DB = "thienhoangDB";
-    public static final String MOVIES_DB = "Moviesdb";
+    public static final String MOVIES_DB = "moviesDB";
     private static final String URI = "jdbc:mysql://cs174a.engr.ucsb.edu:3306/";
 
     private static Connection con = null;
@@ -35,7 +35,7 @@ public class DBInteraction {
         }
     }
 
-    public static void useDB(String tablename, Statement stmt) {
+    public static void useDB(String DBname, Statement stmt) {
         if (stmt == null) {
             try {
                 stmt = con.createStatement();
@@ -44,7 +44,7 @@ public class DBInteraction {
             }
         }
         try {
-            stmt.execute(String.format(USE_DB_STATEMENT, tablename));
+            stmt.execute(String.format(USE_DB_STATEMENT, DBname));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -136,7 +136,13 @@ public class DBInteraction {
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line;
         while((line = reader.readLine()) != null) {
-            if (!line.trim().equals("")) stmt.execute(line);
+            if (!line.trim().equals("")) {
+                try {
+                    stmt.execute(line);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         reader.close();
     }
