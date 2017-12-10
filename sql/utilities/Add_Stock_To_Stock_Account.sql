@@ -1,7 +1,7 @@
 CREATE PROCEDURE Add_Stock_To_Stock_Account (IN in_aid INT, IN in_sym CHAR(3), IN amt DECIMAL(18,3), IN b_pps DECIMAL(18,3))
 BEGIN
     DECLARE existed BOOL;
-    SET existed = EXISTS(SELECT * FROM IN_STOCK_ACC WHERE aid = in_aid AND sym = in_sym AND pps = b_pps);
+    SET existed = EXISTS(SELECT * FROM In_Stock_Acc WHERE aid = in_aid AND sym = in_sym AND pps = b_pps);
     IF existed THEN
         UPDATE In_Stock_Acc
         SET balance = balance + amt
